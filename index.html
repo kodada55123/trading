@@ -477,9 +477,13 @@ function renderCharts(uPnl, rPnl, tPnl, posSort, totalValue) {
 function renderJournal() {
   const q = document.getElementById("j-filter-stock")?.value.toLowerCase() || '';
 
-  // Group all trades by stock name
+  // ETF stocks to exclude from journal
+  const etfStocks = new Set(_POSITIONS.filter(p => p.type === 'ETF').map(p => p.stock));
+
+  // Group all trades by stock name (skip ETFs)
   const groups = {};
   _TRADES.forEach(t => {
+    if (etfStocks.has(t.stock)) return;
     if (q && !t.stock.toLowerCase().includes(q)) return;
     if (!groups[t.stock]) groups[t.stock] = { stock:t.stock, trades:[] };
     groups[t.stock].trades.push(t);
