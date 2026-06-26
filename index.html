@@ -113,6 +113,13 @@ tr:hover td{background:rgba(255,255,255,.03);}
 .j-note::placeholder{color:var(--muted);font-style:italic;}
 .j-note.has-note{border-color:rgba(63,185,80,.4);}
 .j-saved{font-size:11px;color:var(--green);margin-top:4px;height:14px;}
+.j-rows{margin-bottom:12px;}
+.j-row{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.j-row:last-child{border-bottom:none;}
+.j-row-date{font-size:12px;color:var(--muted);min-width:90px;}
+.j-row-shares{font-size:13px;min-width:70px;}
+.j-row-price{font-size:13px;color:var(--text);min-width:80px;}
+.j-row-net{font-size:13px;font-weight:500;margin-left:auto;}
 
 /* ── Rules ── */
 .rules-add{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:20px;}
@@ -154,7 +161,6 @@ tr:hover td{background:rgba(255,255,255,.03);}
         <button onclick="showSection('realized',this)">已實現</button>
         <button onclick="showSection('trades',this)">交易明細</button>
         <button onclick="showSection('journal',this)">交易筆記</button>
-        <button onclick="showSection('rules',this)">交易紀律</button>
         <button class="accent" onclick="showSection('upload',this)">⬆ 資料更新</button>
       </div>
       <div class="updated">更新：<span id="updated-date"></span></div>
@@ -225,33 +231,9 @@ tr:hover td{background:rgba(255,255,255,.03);}
     <h2>交易筆記</h2>
     <p style="color:var(--muted);font-size:13px;margin-bottom:14px;">同一天、同一股票的操作自動彙整為一筆。記錄進出場理由，刷新後筆記仍保留。</p>
     <div class="journal-filter">
-      <input type="text" id="j-filter-stock" placeholder="搜尋股票…" oninput="renderJournal()">
-      <select id="j-filter-month" onchange="renderJournal()">
-        <option value="">全部月份</option>
-        <option value="2026-06">2026-06</option>
-        <option value="2026-05">2026-05</option>
-        <option value="2026-04">2026-04</option>
-        <option value="2026-03">2026-03</option>
-        <option value="2026-02">2026-02</option>
-        <option value="2026-01">2026-01</option>
-      </select>
+      <input type="text" id="j-filter-stock" placeholder="搜尋股票名稱…" oninput="renderJournal()">
     </div>
     <div id="journal-list"></div>
-  </div>
-
-  <!-- ═══════════ RULES ═══════════ -->
-  <div id="section-rules" class="section">
-    <h2>交易紀律｜不可再犯</h2>
-    <p style="color:var(--muted);font-size:13px;margin-bottom:16px;">記錄曾犯過的錯誤與禁止行為。勾選「已改正」後可標記為完成，但不刪除紀錄。</p>
-
-    <div class="rules-add">
-      <h3 style="margin-top:0;margin-bottom:10px;">新增規則</h3>
-      <input type="text" id="rule-title-input" placeholder="錯誤行為（簡短標題，例：情緒盤追高）" maxlength="60">
-      <textarea id="rule-detail-input" placeholder="詳細說明：案例、後果、為何不能再犯…"></textarea>
-      <button class="btn primary" onclick="addRule()">＋ 新增</button>
-    </div>
-
-    <div id="rules-list"></div>
   </div>
 
   <!-- ═══════════ UPLOAD ═══════════ -->
@@ -324,7 +306,6 @@ function showSection(id, btn) {
   document.getElementById("section-" + id).classList.add("active");
   if (btn) btn.classList.add("active");
   if (id === 'journal') renderJournal();
-  if (id === 'rules')   renderRules();
 }
 
 // ─────────────────────────────────────────────
@@ -488,24 +469,25 @@ function renderCharts(uPnl, rPnl, tPnl, posSort, totalValue) {
 }
 
 // ─────────────────────────────────────────────
-// Journal
+// Journal — grouped by STOCK
 // ─────────────────────────────────────────────
 function renderJournal() {
   const q = document.getElementById("j-filter-stock")?.value.toLowerCase() || '';
-  const m = document.getElementById("j-filter-month")?.value || '';
 
-  // Group trades by date + stock
+  // Group all trades by stock name
   const groups = {};
   _TRADES.forEach(t => {
     if (q && !t.stock.toLowerCase().includes(q)) return;
-    if (m && !t.date.startsWith(m)) return;
-    const key = `${t.date}__${t.stock}`;
-    if (!groups[key]) groups[key] = { date:t.date, stock:t.stock, buys:[], sells:[] };
-    if (t.action === 'BUY')  groups[key].buys.push(t);
-    else                     groups[key].sells.push(t);
+    if (!groups[t.stock]) groups[t.stock] = { stock:t.stock, trades:[] };
+    groups[t.stock].trades.push(t);
   });
 
-  const sorted = Object.values(groups).sort((a,b) => b.date.localeCompare(a.date));
+  const sorted = Object.values(groups).sort((a,b) => {
+    // Sort by latest trade date desc
+    const latestA = a.trades.reduce((m,t) => t.date > m ? t.date : m, '');
+    const latestB = b.trades.reduce((m,t) => t.date > m ? t.date : m, '');
+    return latestB.localeCompare(latestA);
+  });
 
   if (!sorted.length) {
     document.getElementById("journal-list").innerHTML =
@@ -514,35 +496,31 @@ function renderJournal() {
   }
 
   document.getElementById("journal-list").innerHTML = sorted.map(g => {
-    const allTrades = [...g.buys, ...g.sells];
-    const totalNet  = allTrades.reduce((s,t) => s + t.net, 0);
-    const jkey      = `journal_${g.date}_${g.stock}`;
-    const saved     = localStorage.getItem(jkey) || '';
+    const jkey  = `journal_stock_${g.stock}`;
+    const saved = localStorage.getItem(jkey) || '';
+    const byDate = [...g.trades].sort((a,b) => b.date.localeCompare(a.date));
 
-    const buyChip = g.buys.length
-      ? `<span class="j-chip buy">買 ${fmt(g.buys.reduce((s,t)=>s+t.shares,0))}股</span>` : '';
-    const sellChip = g.sells.length
-      ? `<span class="j-chip sell">賣 ${fmt(g.sells.reduce((s,t)=>s+t.shares,0))}股</span>` : '';
-    const netChip  = `<span class="j-chip ${totalNet>=0?'net-up':'net-dn'}">${sign(totalNet)}${fmt(Math.abs(totalNet))}</span>`;
-
-    const buyLines = g.buys.map(t =>
-      `<span style="color:var(--green);">▲買</span> ${fmt(t.shares)}股 @${fmtD(t.price)}　`
-    ).join('');
-    const sellLines = g.sells.map(t =>
-      `<span style="color:var(--red);">▼賣</span> ${fmt(t.shares)}股 @${fmtD(t.price)}　`
-    ).join('');
+    const rows = byDate.map(t => {
+      const isBuy = t.action === 'BUY';
+      return `<div class="j-row">
+        <span class="j-row-date">${t.date}</span>
+        <span class="badge ${isBuy?'b-buy':'b-sell'}" style="font-size:11px;">${isBuy?'買進':'賣出'}</span>
+        <span class="j-row-shares">${fmt(t.shares)} 股</span>
+        <span class="j-row-price">@${fmtD(t.price)}</span>
+        <span class="j-row-net ${cls(t.net)}">${sign(t.net)}${fmt(Math.abs(t.net))}</span>
+      </div>`;
+    }).join('');
 
     return `<div class="j-card">
       <div class="j-header">
-        <span class="j-date">${g.date}</span>
         <span class="j-stock">${g.stock}</span>
-        <div class="j-chips">${buyChip}${sellChip}${netChip}</div>
+        <span class="j-date" style="margin-left:auto;font-size:12px;color:var(--muted);">${g.trades.length} 筆交易</span>
       </div>
       <div class="j-body">
-        <div class="j-trades">${buyLines}${sellLines}</div>
+        <div class="j-rows">${rows}</div>
         <textarea class="j-note${saved?' has-note':''}"
           data-jkey="${esc(jkey)}"
-          placeholder="為何進場？為何出場？當時的判斷依據、市場情緒、反思…"
+          placeholder="交易筆記：進出場理由、市場判斷、操作反思…"
           oninput="onJournalInput(this)"
           onblur="onJournalBlur(this)"
         >${esc(saved)}</textarea>
@@ -559,85 +537,6 @@ function onJournalBlur(el) {
   localStorage.setItem(el.dataset.jkey, el.value);
   const ind = document.getElementById('jsaved_' + el.dataset.jkey);
   if (ind) ind.textContent = el.value.trim() ? '✓ 已儲存' : '';
-}
-
-// ─────────────────────────────────────────────
-// Rules
-// ─────────────────────────────────────────────
-const RULES_KEY = 'trading_rules_v1';
-
-const DEFAULT_RULES = [
-  { id:1, title:'情緒盤追高不進場', fixed:false,
-    detail:'案例：奇鋐第二段（2026-06）開盤爆大量追入，無任何計畫，虧損 -13,100（-6.4%）\n後果：情緒帶動決策，完全無法控制進場點' },
-  { id:2, title:'禁止恐慌性加碼攤平', fixed:false,
-    detail:'案例：緯創（2026-05）跌破停損點後繼續加碼，結果虧損從 -4% 擴大至 -14,500\n後果：用更大的虧損賭反彈，加大下行風險' },
-  { id:3, title:'進場前先設好停損點再下單', fixed:false,
-    detail:'沒有停損計畫的交易，最終都是靠情緒決定出場時機，往往太晚或不執行' },
-  { id:4, title:'不要分批買入造成均價失控', fixed:false,
-    detail:'多次分批進場加碼，導致總部位遠超原始計畫，一旦走勢反轉損失倍增' },
-  { id:5, title:'停損訊號出現立即執行，不等待', fixed:false,
-    detail:'帶量跌破MA10、OBV明顯背離，訊號出現就是出場，不要猶豫「等看看」' },
-];
-
-function loadRules() {
-  const saved = localStorage.getItem(RULES_KEY);
-  return saved ? JSON.parse(saved) : DEFAULT_RULES;
-}
-function saveRulesData(rules) {
-  localStorage.setItem(RULES_KEY, JSON.stringify(rules));
-}
-
-function renderRules() {
-  const rules = loadRules();
-  if (!rules.length) {
-    document.getElementById("rules-list").innerHTML =
-      `<p style="color:var(--muted);padding:20px 0;">尚無規則，請在上方新增。</p>`;
-    return;
-  }
-  document.getElementById("rules-list").innerHTML = rules.map(r => `
-    <div class="rule-card${r.fixed?' fixed':''}">
-      <div class="rule-top">
-        <div class="rule-check" onclick="toggleRule(${r.id})" title="標記為已改正">
-          ${r.fixed ? '✓' : ''}
-        </div>
-        <div class="rule-body">
-          <div class="rule-title">🚫 ${esc(r.title)}</div>
-          <div class="rule-detail">${esc(r.detail)}</div>
-          <div class="rule-meta">
-            <span class="rule-tag${r.fixed?' ok':''}">
-              ${r.fixed ? '✓ 已改正' : '⚠ 未改正'}
-            </span>
-          </div>
-        </div>
-        <button class="rule-del" onclick="deleteRule(${r.id})" title="刪除">✕</button>
-      </div>
-    </div>`).join("");
-}
-
-function addRule() {
-  const title  = document.getElementById("rule-title-input").value.trim();
-  const detail = document.getElementById("rule-detail-input").value.trim();
-  if (!title) { alert("請輸入錯誤行為標題"); return; }
-  const rules = loadRules();
-  const maxId = rules.reduce((m,r) => Math.max(m, r.id), 0);
-  rules.push({ id: maxId + 1, title, detail, fixed: false });
-  saveRulesData(rules);
-  document.getElementById("rule-title-input").value  = '';
-  document.getElementById("rule-detail-input").value = '';
-  renderRules();
-}
-
-function toggleRule(id) {
-  const rules = loadRules();
-  const r = rules.find(r => r.id === id);
-  if (r) { r.fixed = !r.fixed; saveRulesData(rules); renderRules(); }
-}
-
-function deleteRule(id) {
-  if (!confirm("確定刪除此規則？")) return;
-  const rules = loadRules().filter(r => r.id !== id);
-  saveRulesData(rules);
-  renderRules();
 }
 
 // ─────────────────────────────────────────────
