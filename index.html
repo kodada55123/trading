@@ -113,6 +113,9 @@ tr:hover td{background:rgba(255,255,255,.03);}
 .j-note::placeholder{color:var(--muted);font-style:italic;}
 .j-note.has-note{border-color:rgba(63,185,80,.4);}
 .j-saved{font-size:11px;color:var(--green);margin-top:4px;height:14px;}
+.j-card-open{border-color:rgba(63,185,80,.35);background:rgba(63,185,80,.04);}
+.j-header-open{background:rgba(63,185,80,.08);border-bottom-color:rgba(63,185,80,.2);}
+.j-open-tag{font-size:11px;padding:2px 10px;border-radius:10px;background:rgba(63,185,80,.2);color:var(--green);font-weight:600;margin-left:8px;}
 .j-rows{margin-bottom:12px;}
 .j-row{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;}
 .j-row:last-child{border-bottom:none;}
@@ -482,8 +485,12 @@ function renderJournal() {
     groups[t.stock].trades.push(t);
   });
 
+  const openStocks = new Set(_POSITIONS.map(p => p.stock));
+
   const sorted = Object.values(groups).sort((a,b) => {
-    // Sort by latest trade date desc
+    const aOpen = openStocks.has(a.stock) ? 1 : 0;
+    const bOpen = openStocks.has(b.stock) ? 1 : 0;
+    if (bOpen !== aOpen) return bOpen - aOpen; // open positions first
     const latestA = a.trades.reduce((m,t) => t.date > m ? t.date : m, '');
     const latestB = b.trades.reduce((m,t) => t.date > m ? t.date : m, '');
     return latestB.localeCompare(latestA);
@@ -496,8 +503,10 @@ function renderJournal() {
   }
 
   document.getElementById("journal-list").innerHTML = sorted.map(g => {
-    const jkey  = `journal_stock_${g.stock}`;
-    const saved = localStorage.getItem(jkey) || '';
+    const isOpen = openStocks.has(g.stock);
+    const pos    = isOpen ? _POSITIONS.find(p => p.stock === g.stock) : null;
+    const jkey   = `journal_stock_${g.stock}`;
+    const saved  = localStorage.getItem(jkey) || '';
     const byDate = [...g.trades].sort((a,b) => b.date.localeCompare(a.date));
 
     const rows = byDate.map(t => {
@@ -511,10 +520,14 @@ function renderJournal() {
       </div>`;
     }).join('');
 
-    return `<div class="j-card">
-      <div class="j-header">
+    const posTag = isOpen && pos ? `
+      <span class="j-open-tag">持倉中 ${fmt(pos.shares)}股 ${sign(pos.pct)}${fmtD(pos.pct)}%</span>` : '';
+
+    return `<div class="j-card${isOpen?' j-card-open':''}">
+      <div class="j-header${isOpen?' j-header-open':''}">
         <span class="j-stock">${g.stock}</span>
-        <span class="j-date" style="margin-left:auto;font-size:12px;color:var(--muted);">${g.trades.length} 筆交易</span>
+        ${posTag}
+        <span style="margin-left:auto;font-size:12px;color:var(--muted);">${g.trades.length} 筆交易</span>
       </div>
       <div class="j-body">
         <div class="j-rows">${rows}</div>
