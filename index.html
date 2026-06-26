@@ -11,24 +11,21 @@
   --bg:#0d1117;--bg2:#161b22;--bg3:#21262d;
   --border:#30363d;--text:#c9d1d9;--muted:#8b949e;
   --green:#3fb950;--red:#f85149;--blue:#58a6ff;
-  --gold:#f0a832;--purple:#bc8cff;--teal:#56d364;
+  --gold:#f0a832;--purple:#bc8cff;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:14px;line-height:1.6;}
-a{color:var(--blue);text-decoration:none;}
 
-/* ── Layout ── */
 .container{max-width:1280px;margin:0 auto;padding:0 20px;}
 header{background:var(--bg2);border-bottom:1px solid var(--border);padding:14px 0;position:sticky;top:0;z-index:100;}
 .header-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
 .logo{font-size:18px;font-weight:600;color:#fff;}
 .logo span{color:var(--green);}
 .updated{font-size:12px;color:var(--muted);}
-.nav{display:flex;gap:4px;}
+.nav{display:flex;gap:4px;flex-wrap:wrap;}
 .nav button{background:none;border:1px solid var(--border);color:var(--muted);padding:5px 14px;border-radius:6px;cursor:pointer;font-size:13px;transition:.15s;}
 .nav button.active,.nav button:hover{background:var(--bg3);color:var(--text);border-color:var(--blue);}
 
-/* ── Cards ── */
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:24px 0;}
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px 18px;}
 .card-label{font-size:11px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;}
@@ -38,12 +35,10 @@ header{background:var(--bg2);border-bottom:1px solid var(--border);padding:14px 
 .dn{color:var(--red);}
 .neu{color:var(--text);}
 
-/* ── Section ── */
 .section{display:none;}
 .section.active{display:block;}
 h2{font-size:16px;font-weight:600;margin:24px 0 12px;color:#fff;border-left:3px solid var(--blue);padding-left:10px;}
 
-/* ── Table ── */
 .tbl-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border);}
 table{width:100%;border-collapse:collapse;font-size:13px;}
 th{background:var(--bg2);color:var(--muted);font-weight:500;padding:10px 12px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--border);}
@@ -56,22 +51,55 @@ tr:hover td{background:rgba(255,255,255,.03);}
 .b-etf{background:rgba(88,166,255,.15);color:var(--blue);}
 .b-stock{background:rgba(240,168,50,.15);color:var(--gold);}
 
-/* ── Charts ── */
 .charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;margin:16px 0;}
 .chart-box{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;}
 .chart-title{font-size:13px;color:var(--muted);margin-bottom:12px;}
 
-/* ── Filters ── */
 .filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
 .filters input,.filters select{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:6px;font-size:13px;outline:none;}
 .filters input:focus,.filters select:focus{border-color:var(--blue);}
 
-/* ── Progress bar ── */
 .pbar{background:var(--bg3);border-radius:3px;height:5px;overflow:hidden;margin-top:4px;}
 .pbar-fill{height:100%;border-radius:3px;background:var(--green);}
 .pbar-fill.neg{background:var(--red);}
 
-/* ── Responsive ── */
+/* ── Note input ── */
+.note-input{
+  background:transparent;border:none;border-bottom:1px solid transparent;
+  color:var(--text);font-size:12px;width:160px;padding:2px 6px;
+  outline:none;font-family:inherit;transition:border-color .15s;
+}
+.note-input:hover{border-bottom-color:var(--border);}
+.note-input:focus{border-bottom-color:var(--blue);}
+.note-input::placeholder{color:var(--muted);font-style:italic;}
+.note-input.has-note{border-bottom-color:var(--green);}
+
+/* ── Upload section ── */
+.upload-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin:16px 0;}
+.upload-card{
+  display:block;background:var(--bg2);border:2px dashed var(--border);
+  border-radius:12px;padding:36px 24px;text-align:center;
+  cursor:pointer;transition:.15s;user-select:none;
+}
+.upload-card:hover,.upload-card.drag-over{border-color:var(--blue);background:rgba(88,166,255,.04);}
+.upload-card.done{border-color:var(--green);background:rgba(63,185,80,.04);}
+.upload-card input[type=file]{display:none;}
+.upload-icon{font-size:42px;display:block;margin-bottom:14px;}
+.upload-title{font-size:15px;font-weight:600;color:#fff;margin-bottom:6px;}
+.upload-sub{font-size:12px;color:var(--muted);line-height:1.8;}
+.upload-hint{font-size:11px;color:var(--blue);margin-top:10px;}
+
+.log-box{
+  background:var(--bg2);border:1px solid var(--border);border-radius:8px;
+  padding:14px 16px;font-family:"SF Mono",Menlo,monospace;font-size:12px;
+  min-height:80px;max-height:280px;overflow-y:auto;
+  white-space:pre-wrap;margin-top:16px;color:var(--muted);
+}
+.lg{color:var(--green);}
+.lr{color:var(--red);}
+.lb{color:var(--blue);}
+.lw{color:var(--text);}
+
 @media(max-width:600px){
   .card-val{font-size:18px;}
   .cards{grid-template-columns:repeat(2,1fr);}
@@ -89,6 +117,7 @@ tr:hover td{background:rgba(255,255,255,.03);}
         <button onclick="showSection('positions',this)">持倉</button>
         <button onclick="showSection('realized',this)">已實現</button>
         <button onclick="showSection('trades',this)">交易明細</button>
+        <button onclick="showSection('upload',this)" style="border-color:var(--blue);color:var(--blue);">⬆ 資料更新</button>
       </div>
       <div class="updated">更新：<span id="updated-date"></span></div>
     </div>
@@ -97,10 +126,9 @@ tr:hover td{background:rgba(255,255,255,.03);}
 
 <div class="container" style="padding-bottom:60px;">
 
-  <!-- ═════════ DASHBOARD ═════════ -->
+  <!-- ═══════════ DASHBOARD ═══════════ -->
   <div id="section-dashboard" class="section active">
     <div class="cards" id="summary-cards"></div>
-
     <div class="charts">
       <div class="chart-box" style="grid-column:1/-1;">
         <div class="chart-title">損益結構（已實現 vs 未實現）</div>
@@ -115,30 +143,23 @@ tr:hover td{background:rgba(255,255,255,.03);}
         <canvas id="chart-monthly" height="240"></canvas>
       </div>
     </div>
-
     <h2>未實現持倉快照</h2>
-    <div class="tbl-wrap">
-      <table id="tbl-pos-dash"></table>
-    </div>
+    <div class="tbl-wrap"><table id="tbl-pos-dash"></table></div>
   </div>
 
-  <!-- ═════════ POSITIONS ═════════ -->
+  <!-- ═══════════ POSITIONS ═══════════ -->
   <div id="section-positions" class="section">
     <h2>未實現持倉明細</h2>
-    <div class="tbl-wrap">
-      <table id="tbl-positions"></table>
-    </div>
+    <div class="tbl-wrap"><table id="tbl-positions"></table></div>
   </div>
 
-  <!-- ═════════ REALIZED ═════════ -->
+  <!-- ═══════════ REALIZED ═══════════ -->
   <div id="section-realized" class="section">
     <h2>已實現損益摘要</h2>
-    <div class="tbl-wrap">
-      <table id="tbl-realized"></table>
-    </div>
+    <div class="tbl-wrap"><table id="tbl-realized"></table></div>
   </div>
 
-  <!-- ═════════ TRADES ═════════ -->
+  <!-- ═══════════ TRADES ═══════════ -->
   <div id="section-trades" class="section">
     <h2>交易明細</h2>
     <div class="filters">
@@ -158,206 +179,494 @@ tr:hover td{background:rgba(255,255,255,.03);}
         <option value="2026-01">2026-01</option>
       </select>
     </div>
-    <div class="tbl-wrap">
-      <table id="tbl-trades"></table>
+    <div class="tbl-wrap"><table id="tbl-trades"></table></div>
+  </div>
+
+  <!-- ═══════════ UPLOAD ═══════════ -->
+  <div id="section-upload" class="section">
+    <h2>匯入 CSV 資料</h2>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:4px;">
+      直接上傳券商匯出的 CSV 檔案，系統自動識別格式並合併。相同委託書號的交易自動去重。
+    </p>
+    <div class="upload-grid">
+
+      <label class="upload-card" id="card-tx"
+        ondragover="event.preventDefault();this.classList.add('drag-over')"
+        ondragleave="this.classList.remove('drag-over')"
+        ondrop="event.preventDefault();this.classList.remove('drag-over');handleUpload(event.dataTransfer.files[0],'tx')">
+        <input type="file" accept=".csv,.txt" onchange="handleUpload(this.files[0],'tx');this.value=''">
+        <span class="upload-icon">📄</span>
+        <div class="upload-title">對帳單 CSV</div>
+        <div class="upload-sub">
+          券商「證券對帳單」<br>
+          自動新增交易明細<br>
+          重複委託書號自動跳過
+        </div>
+        <div class="upload-hint">點擊上傳 或 拖曳至此</div>
+      </label>
+
+      <label class="upload-card" id="card-pos"
+        ondragover="event.preventDefault();this.classList.add('drag-over')"
+        ondragleave="this.classList.remove('drag-over')"
+        ondrop="event.preventDefault();this.classList.remove('drag-over');handleUpload(event.dataTransfer.files[0],'pos')">
+        <input type="file" accept=".csv,.txt" onchange="handleUpload(this.files[0],'pos');this.value=''">
+        <span class="upload-icon">📊</span>
+        <div class="upload-title">未實現彙總 CSV</div>
+        <div class="upload-sub">
+          券商「未實現損益彙總」<br>
+          更新持倉市值與損益<br>
+          自動替換現有持倉
+        </div>
+        <div class="upload-hint">點擊上傳 或 拖曳至此</div>
+      </label>
+
     </div>
+    <div class="log-box" id="upload-log">等待上傳…
+</div>
   </div>
 
 </div>
 
 <script>
-// ──────────────────────────────────────────────
+// ─────────────────────────────────────────────
 // Helpers
-// ──────────────────────────────────────────────
+// ─────────────────────────────────────────────
 const fmt  = n => Number(n).toLocaleString("zh-TW",{maximumFractionDigits:0});
 const fmtD = n => Number(n).toLocaleString("zh-TW",{minimumFractionDigits:2,maximumFractionDigits:2});
 const sign = n => n >= 0 ? "+" : "";
 const cls  = n => n >= 0 ? "up" : "dn";
+const esc  = s => String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
 
+// ─────────────────────────────────────────────
+// Mutable state (CSV import overwrites these)
+// ─────────────────────────────────────────────
+let _TRADES    = [...TRADES];
+let _POSITIONS = [...POSITIONS];
+let _REALIZED  = [...REALIZED];
+
+// ─────────────────────────────────────────────
+// Notes — localStorage, keyed by oid or composite
+// ─────────────────────────────────────────────
+function noteKey(t) {
+  return t.oid
+    ? `note_oid_${t.oid}`
+    : `note_${t.date}_${t.stock}_${t.action}_${t.price}_${t.shares}`;
+}
+function getNote(t) {
+  const saved = localStorage.getItem(noteKey(t));
+  return saved !== null ? saved : (t.note || '');
+}
+function saveNote(key, val) {
+  if (val.trim()) {
+    localStorage.setItem(key, val);
+  } else {
+    localStorage.removeItem(key);
+  }
+}
+function onNoteInput(el) {
+  el.classList.toggle('has-note', el.value.trim().length > 0);
+}
+function onNoteBlur(el) {
+  saveNote(el.dataset.key, el.value);
+}
+
+// ─────────────────────────────────────────────
+// Charts registry (destroy before recreate)
+// ─────────────────────────────────────────────
+const _charts = {};
+function mkChart(id, cfg) {
+  if (_charts[id]) { _charts[id].destroy(); }
+  _charts[id] = new Chart(document.getElementById(id), cfg);
+}
+
+// ─────────────────────────────────────────────
+// Nav
+// ─────────────────────────────────────────────
 function showSection(id, btn) {
   document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
   document.querySelectorAll(".nav button").forEach(b => b.classList.remove("active"));
-  document.getElementById("section-"+id).classList.add("active");
-  if(btn) btn.classList.add("active");
+  document.getElementById("section-" + id).classList.add("active");
+  if (btn) btn.classList.add("active");
 }
 
-// ──────────────────────────────────────────────
-// Init
-// ──────────────────────────────────────────────
-document.getElementById("updated-date").textContent = LAST_UPDATED;
+// ─────────────────────────────────────────────
+// renderAll — recomputes stats and redraws everything
+// ─────────────────────────────────────────────
+function renderAll() {
+  document.getElementById("updated-date").textContent = LAST_UPDATED;
 
-const totalUnrealized   = POSITIONS.reduce((s,p) => s + p.pnl, 0);
-const totalValue        = POSITIONS.reduce((s,p) => s + p.value, 0);
-const totalCost         = POSITIONS.reduce((s,p) => s + (p.value - p.pnl), 0);
-const realizedWinPnl    = REALIZED.filter(r=>r.pnl>0).reduce((s,r)=>s+r.pnl,0);
-const realizedLossPnl   = REALIZED.filter(r=>r.pnl<0).reduce((s,r)=>s+r.pnl,0);
-const totalRealizedPnl  = REALIZED.reduce((s,r)=>s+r.pnl,0);
-const totalPnl          = totalUnrealized + totalRealizedPnl;
-const winCount          = REALIZED.filter(r=>r.pnl>0).length;
-const winRate           = Math.round(winCount / REALIZED.length * 100);
+  const totalUnrealized  = _POSITIONS.reduce((s,p) => s + p.pnl, 0);
+  const totalValue       = _POSITIONS.reduce((s,p) => s + p.value, 0);
+  const totalCost        = _POSITIONS.reduce((s,p) => s + (p.value - p.pnl), 0);
+  const totalRealizedPnl = _REALIZED.reduce((s,r) => s + r.pnl, 0);
+  const totalPnl         = totalUnrealized + totalRealizedPnl;
+  const winCount         = _REALIZED.filter(r => r.pnl > 0).length;
+  const winRate          = Math.round(winCount / (_REALIZED.length || 1) * 100);
 
-// ── Summary Cards ────────────────────────────
-const cards = [
-  { label:"投資組合現值",    val:"$"+fmt(totalValue)+" 元",   sub:"未實現倉位",  color:"neu" },
-  { label:"未實現獲利",      val:sign(totalUnrealized)+"$"+fmt(totalUnrealized), sub:fmtD(totalUnrealized/totalCost*100)+"%", color:cls(totalUnrealized) },
-  { label:"已實現獲利（估）",val:sign(totalRealizedPnl)+"$"+fmt(totalRealizedPnl), sub:"本期進出場", color:cls(totalRealizedPnl) },
-  { label:"合計總獲利（估）",val:sign(totalPnl)+"$"+fmt(totalPnl), sub:"實現＋未實現", color:cls(totalPnl) },
-  { label:"勝率",           val:winRate+"%", sub:winCount+" 勝 / "+REALIZED.length+" 筆", color:winRate>=50?"up":"dn" },
-  { label:"交易標的數",      val:[...new Set(TRADES.map(t=>t.stock))].length+" 檔", sub:"本期累計", color:"neu" },
-];
-document.getElementById("summary-cards").innerHTML = cards.map(c=>`
-  <div class="card">
-    <div class="card-label">${c.label}</div>
-    <div class="card-val ${c.color}">${c.val}</div>
-    <div class="card-sub">${c.sub}</div>
-  </div>`).join("");
+  // ── Summary cards
+  const cards = [
+    { label:"投資組合現值",    val:"$"+fmt(totalValue)+" 元",   sub:"未實現倉位",  color:"neu" },
+    { label:"未實現獲利",      val:sign(totalUnrealized)+"$"+fmt(totalUnrealized),
+                               sub:fmtD(totalUnrealized/(totalCost||1)*100)+"%",   color:cls(totalUnrealized) },
+    { label:"已實現獲利（估）",val:sign(totalRealizedPnl)+"$"+fmt(totalRealizedPnl),
+                               sub:"本期進出場",                                   color:cls(totalRealizedPnl) },
+    { label:"合計總獲利（估）",val:sign(totalPnl)+"$"+fmt(totalPnl),
+                               sub:"實現＋未實現",                                 color:cls(totalPnl) },
+    { label:"勝率",            val:winRate+"%",    sub:winCount+" 勝 / "+_REALIZED.length+" 筆", color:winRate>=50?"up":"dn" },
+    { label:"交易標的數",      val:[...new Set(_TRADES.map(t=>t.stock))].length+" 檔",
+                               sub:"本期累計",                                     color:"neu" },
+  ];
+  document.getElementById("summary-cards").innerHTML = cards.map(c=>`
+    <div class="card">
+      <div class="card-label">${c.label}</div>
+      <div class="card-val ${c.color}">${c.val}</div>
+      <div class="card-sub">${c.sub}</div>
+    </div>`).join("");
 
-// ── Positions Table (dashboard) ───────────────
-function posRow(p, compact=false) {
-  const pct = fmtD(Math.abs(p.pct));
-  const bar = Math.min(Math.abs(p.pct),150)/150*100;
-  return `<tr>
-    <td><strong>${p.stock}</strong><br><span style="color:var(--muted);font-size:11px;">${p.code}</span></td>
-    <td><span class="badge ${p.type==="ETF"?"b-etf":"b-stock"}">${p.type}</span></td>
-    <td>${fmt(p.shares)}</td>
-    <td>${fmtD(p.avgCost)}</td>
-    <td>${fmtD(p.price)}</td>
-    <td>${fmt(p.value)}</td>
-    <td class="${cls(p.pnl)}">${sign(p.pnl)}${fmt(p.pnl)}</td>
-    <td class="${cls(p.pnl)}">${sign(p.pct)}${pct}%
-      <div class="pbar"><div class="pbar-fill${p.pct<0?" neg":""}" style="width:${bar}%"></div></div>
-    </td>
-  </tr>`;
+  // ── Positions
+  const posHead = `<thead><tr>
+    <th>股票</th><th>類別</th><th>股數</th><th>均價</th><th>市價</th>
+    <th>現值</th><th>未實現損益</th><th>報酬率</th>
+  </tr></thead>`;
+  const posSort = [..._POSITIONS].sort((a,b) => b.pnl - a.pnl);
+  const posRows = posSort.map(p => {
+    const bar = Math.min(Math.abs(p.pct), 150) / 150 * 100;
+    return `<tr>
+      <td><strong>${p.stock}</strong><br><span style="color:var(--muted);font-size:11px;">${p.code}</span></td>
+      <td><span class="badge ${p.type==="ETF"?"b-etf":"b-stock"}">${p.type}</span></td>
+      <td>${fmt(p.shares)}</td>
+      <td>${fmtD(p.avgCost)}</td>
+      <td>${fmtD(p.price)}</td>
+      <td>${fmt(p.value)}</td>
+      <td class="${cls(p.pnl)}">${sign(p.pnl)}${fmt(p.pnl)}</td>
+      <td class="${cls(p.pnl)}">${sign(p.pct)}${fmtD(Math.abs(p.pct))}%
+        <div class="pbar"><div class="pbar-fill${p.pct<0?" neg":""}" style="width:${bar}%"></div></div>
+      </td>
+    </tr>`;
+  }).join("");
+  document.getElementById("tbl-pos-dash").innerHTML   = posHead + "<tbody>" + posRows + "</tbody>";
+  document.getElementById("tbl-positions").innerHTML  = posHead + "<tbody>" + posRows +
+    `<tr style="font-weight:600;background:var(--bg3);">
+      <td colspan="5">合計</td>
+      <td>${fmt(totalValue)}</td>
+      <td class="${cls(totalUnrealized)}">${sign(totalUnrealized)}${fmt(totalUnrealized)}</td>
+      <td class="${cls(totalUnrealized)}">${fmtD(totalUnrealized/(totalCost||1)*100)}%</td>
+    </tr>` + "</tbody>";
+
+  // ── Realized
+  const realHead = `<thead><tr>
+    <th>股票</th><th>買入日</th><th>賣出日</th><th>損益（估）</th><th>報酬率</th><th>備註</th>
+  </tr></thead>`;
+  document.getElementById("tbl-realized").innerHTML = realHead + "<tbody>" +
+    [..._REALIZED].sort((a,b) => b.pnl - a.pnl).map(r => `<tr>
+      <td><strong>${r.stock}</strong></td>
+      <td style="color:var(--muted);">${r.buyDate}</td>
+      <td style="color:var(--muted);">${r.sellDate}</td>
+      <td class="${cls(r.pnl)}">${sign(r.pnl)}${fmt(r.pnl)}</td>
+      <td class="${cls(r.pnl)}">${r.pct ? sign(r.pct)+fmtD(r.pct)+"%" : "—"}</td>
+      <td style="color:var(--muted);font-size:12px;">${r.note}</td>
+    </tr>`).join("") +
+    `<tr style="font-weight:600;background:var(--bg3);">
+      <td colspan="3">合計</td>
+      <td class="${cls(totalRealizedPnl)}">${sign(totalRealizedPnl)}${fmt(totalRealizedPnl)}</td>
+      <td colspan="2"></td>
+    </tr>` + "</tbody>";
+
+  renderTrades();
+  renderCharts(totalUnrealized, totalRealizedPnl, totalPnl, posSort, totalValue);
 }
-const posHead = `<thead><tr>
-  <th>股票</th><th>類別</th><th>股數</th><th>均價</th><th>市價</th><th>現值</th><th>未實現損益</th><th>報酬率</th>
-</tr></thead>`;
-const posSort = [...POSITIONS].sort((a,b)=>b.pnl-a.pnl);
-document.getElementById("tbl-pos-dash").innerHTML = posHead + "<tbody>" + posSort.map(p=>posRow(p)).join("") + "</tbody>";
-document.getElementById("tbl-positions").innerHTML = posHead + "<tbody>" + posSort.map(p=>posRow(p)).join("") + `
-  <tr style="font-weight:600;background:var(--bg3);">
-    <td colspan="5">合計</td>
-    <td>${fmt(totalValue)}</td>
-    <td class="${cls(totalUnrealized)}">${sign(totalUnrealized)}${fmt(totalUnrealized)}</td>
-    <td class="${cls(totalUnrealized)}">${fmtD(totalUnrealized/totalCost*100)}%</td>
-  </tr>` + "</tbody>";
 
-// ── Realized Table ────────────────────────────
-const realHead = `<thead><tr>
-  <th>股票</th><th>買入日</th><th>賣出日</th><th>損益（估）</th><th>報酬率</th><th>備註</th>
-</tr></thead>`;
-document.getElementById("tbl-realized").innerHTML = realHead + "<tbody>" +
-  [...REALIZED].sort((a,b)=>b.pnl-a.pnl).map(r=>`<tr>
-    <td><strong>${r.stock}</strong></td>
-    <td style="color:var(--muted);">${r.buyDate}</td>
-    <td style="color:var(--muted);">${r.sellDate}</td>
-    <td class="${cls(r.pnl)}">${sign(r.pnl)}${fmt(r.pnl)}</td>
-    <td class="${cls(r.pnl)}">${r.pct?sign(r.pct)+fmtD(r.pct)+"%":"—"}</td>
-    <td style="color:var(--muted);font-size:12px;">${r.note}</td>
-  </tr>`).join("") +
-  `<tr style="font-weight:600;background:var(--bg3);">
-    <td colspan="3">合計</td>
-    <td class="${cls(totalRealizedPnl)}">${sign(totalRealizedPnl)}${fmt(totalRealizedPnl)}</td>
-    <td colspan="2"></td>
-  </tr>` + "</tbody>";
-
-// ── Trades Table ─────────────────────────────
+// ─────────────────────────────────────────────
+// Trades table (with editable notes)
+// ─────────────────────────────────────────────
 function renderTrades() {
-  const q = document.getElementById("filter-stock").value.toLowerCase();
-  const a = document.getElementById("filter-action").value;
-  const m = document.getElementById("filter-month").value;
-  const filtered = [...TRADES]
+  const q = document.getElementById("filter-stock")?.value.toLowerCase() || '';
+  const a = document.getElementById("filter-action")?.value || '';
+  const m = document.getElementById("filter-month")?.value || '';
+  const filtered = [..._TRADES]
     .filter(t => !q || t.stock.toLowerCase().includes(q))
     .filter(t => !a || t.action === a)
     .filter(t => !m || t.date.startsWith(m))
     .sort((a,b) => b.date.localeCompare(a.date));
+
   const thead = `<thead><tr>
     <th>日期</th><th>股票</th><th>方向</th><th>價格</th><th>股數</th>
-    <th>金額</th><th>手續費</th><th>交易稅</th><th>備註</th>
+    <th>金額</th><th>手續費</th><th>交易稅</th>
+    <th title="備註會自動儲存至瀏覽器，重整後仍保留">備註 💾</th>
   </tr></thead>`;
-  document.getElementById("tbl-trades").innerHTML = thead + "<tbody>" +
-    filtered.map(t=>`<tr>
-      <td style="color:var(--muted);">${t.date}</td>
-      <td><strong>${t.stock}</strong></td>
-      <td><span class="badge ${t.action==="BUY"?"b-buy":"b-sell"}">${t.action==="BUY"?"買進":"賣出"}</span></td>
-      <td>${fmtD(t.price)}</td>
-      <td>${fmt(t.shares)}</td>
-      <td class="${cls(t.net)}">${sign(t.net)}${fmt(Math.abs(t.net))}</td>
-      <td style="color:var(--muted);">${t.fee}</td>
-      <td style="color:var(--muted);">${t.tax}</td>
-      <td style="color:var(--muted);font-size:12px;max-width:200px;white-space:normal;">${t.note}</td>
-    </tr>`).join("") + "</tbody>";
-}
-renderTrades();
 
-// ──────────────────────────────────────────────
+  document.getElementById("tbl-trades").innerHTML = thead + "<tbody>" +
+    filtered.map(t => {
+      const key    = noteKey(t);
+      const note   = getNote(t);
+      const stored = localStorage.getItem(key) !== null;
+      return `<tr>
+        <td style="color:var(--muted);">${t.date}</td>
+        <td><strong>${t.stock}</strong></td>
+        <td><span class="badge ${t.action==="BUY"?"b-buy":"b-sell"}">${t.action==="BUY"?"買進":"賣出"}</span></td>
+        <td>${fmtD(t.price)}</td>
+        <td>${fmt(t.shares)}</td>
+        <td class="${cls(t.net)}">${sign(t.net)}${fmt(Math.abs(t.net))}</td>
+        <td style="color:var(--muted);">${t.fee}</td>
+        <td style="color:var(--muted);">${t.tax}</td>
+        <td>
+          <input class="note-input${note?' has-note':''}"
+            data-key="${esc(key)}"
+            value="${esc(note)}"
+            placeholder="新增備註…"
+            oninput="onNoteInput(this)"
+            onblur="onNoteBlur(this)"
+          >
+        </td>
+      </tr>`;
+    }).join("") + "</tbody>";
+}
+
+// ─────────────────────────────────────────────
 // Charts
-// ──────────────────────────────────────────────
+// ─────────────────────────────────────────────
 const CDARK = { color:"#8b949e", gridColor:"rgba(255,255,255,.06)" };
 
-// Chart 1: P&L bar
-new Chart(document.getElementById("chart-pnl"),{
-  type:"bar",
-  data:{
-    labels:["未實現獲利","已實現獲利（估）","合計總獲利（估）"],
-    datasets:[{
-      data:[totalUnrealized, totalRealizedPnl, totalPnl],
-      backgroundColor:["rgba(63,185,80,.6)","rgba(88,166,255,.6)","rgba(240,168,50,.8)"],
-      borderColor:["#3fb950","#58a6ff","#f0a832"],
-      borderWidth:1,borderRadius:5
-    }]
-  },
-  options:{
-    responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:v=>" "+sign(v.raw)+fmt(v.raw)+" 元"}}},
-    scales:{
-      x:{ticks:{color:CDARK.color},grid:{color:CDARK.gridColor}},
-      y:{ticks:{color:CDARK.color,callback:v=>(v>=0?"+":"")+fmt(v)},grid:{color:CDARK.gridColor}}
+function renderCharts(totalUnrealized, totalRealizedPnl, totalPnl, posSort, totalValue) {
+  mkChart("chart-pnl", {
+    type:"bar",
+    data:{
+      labels:["未實現獲利","已實現獲利（估）","合計總獲利（估）"],
+      datasets:[{
+        data:[totalUnrealized, totalRealizedPnl, totalPnl],
+        backgroundColor:["rgba(63,185,80,.6)","rgba(88,166,255,.6)","rgba(240,168,50,.8)"],
+        borderColor:["#3fb950","#58a6ff","#f0a832"],
+        borderWidth:1, borderRadius:5
+      }]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:v=>" "+sign(v.raw)+fmt(v.raw)+" 元"}}},
+      scales:{
+        x:{ticks:{color:CDARK.color},grid:{color:CDARK.gridColor}},
+        y:{ticks:{color:CDARK.color,callback:v=>(v>=0?"+":"")+fmt(v)},grid:{color:CDARK.gridColor}}
+      }
     }
-  }
-});
+  });
 
-// Chart 2: Allocation donut
-const allocColors = ["#58a6ff","#3fb950","#f0a832","#bc8cff","#f85149","#56d364","#ffa657","#d2a8ff","#79c0ff","#ff7b72"];
-new Chart(document.getElementById("chart-alloc"),{
-  type:"doughnut",
-  data:{
-    labels: posSort.map(p=>p.stock),
-    datasets:[{data:posSort.map(p=>p.value), backgroundColor:allocColors, borderWidth:0}]
-  },
-  options:{
-    responsive:true,
-    plugins:{
-      legend:{position:"right",labels:{color:"#c9d1d9",font:{size:11},boxWidth:12}},
-      tooltip:{callbacks:{label:v=>` ${v.label}: ${fmt(v.raw)} (${fmtD(v.raw/totalValue*100)}%)`}}
+  const allocColors = ["#58a6ff","#3fb950","#f0a832","#bc8cff","#f85149","#56d364","#ffa657","#d2a8ff","#79c0ff","#ff7b72"];
+  mkChart("chart-alloc", {
+    type:"doughnut",
+    data:{
+      labels: posSort.map(p=>p.stock),
+      datasets:[{ data:posSort.map(p=>p.value), backgroundColor:allocColors, borderWidth:0 }]
+    },
+    options:{
+      responsive:true,
+      plugins:{
+        legend:{position:"right",labels:{color:"#c9d1d9",font:{size:11},boxWidth:12}},
+        tooltip:{callbacks:{label:v=>` ${v.label}: ${fmt(v.raw)} (${fmtD(v.raw/(totalValue||1)*100)}%)`}}
+      }
     }
-  }
-});
+  });
 
-// Chart 3: Monthly trades
-const monthMap = {};
-TRADES.forEach(t=>{
-  const m = t.date.slice(0,7);
-  monthMap[m] = (monthMap[m]||0)+1;
-});
-const months = Object.keys(monthMap).sort();
-new Chart(document.getElementById("chart-monthly"),{
-  type:"bar",
-  data:{
-    labels:months,
-    datasets:[{
-      label:"交易筆數",data:months.map(m=>monthMap[m]),
-      backgroundColor:"rgba(88,166,255,.5)",borderColor:"#58a6ff",borderWidth:1,borderRadius:4
-    }]
-  },
-  options:{
-    responsive:true,
-    plugins:{legend:{display:false}},
-    scales:{
-      x:{ticks:{color:CDARK.color},grid:{display:false}},
-      y:{ticks:{color:CDARK.color},grid:{color:CDARK.gridColor}}
+  const monthMap = {};
+  _TRADES.forEach(t => { const m = t.date.slice(0,7); monthMap[m] = (monthMap[m]||0)+1; });
+  const months = Object.keys(monthMap).sort();
+  mkChart("chart-monthly", {
+    type:"bar",
+    data:{
+      labels:months,
+      datasets:[{
+        label:"交易筆數", data:months.map(m=>monthMap[m]),
+        backgroundColor:"rgba(88,166,255,.5)", borderColor:"#58a6ff", borderWidth:1, borderRadius:4
+      }]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{ticks:{color:CDARK.color},grid:{display:false}},
+        y:{ticks:{color:CDARK.color},grid:{color:CDARK.gridColor}}
+      }
     }
+  });
+}
+
+// ─────────────────────────────────────────────
+// CSV Upload
+// ─────────────────────────────────────────────
+function ulog(msg, cls='') {
+  const box = document.getElementById("upload-log");
+  const ts = new Date().toLocaleTimeString('zh-TW');
+  box.innerHTML += `<span class="${cls}">[${ts}] ${msg}\n</span>`;
+  box.scrollTop = box.scrollHeight;
+}
+
+function handleUpload(file) {
+  if (!file) return;
+  ulog(`📂 載入：${file.name}`, 'lb');
+
+  const tryRead = (encoding) => new Promise(resolve => {
+    const r = new FileReader();
+    r.onload = e => resolve(e.target.result);
+    r.readAsText(file, encoding);
+  });
+
+  tryRead('UTF-8').then(text => {
+    // If no CJK characters found, try Big5
+    if (!/[一-龥]/.test(text.slice(0, 300))) {
+      return tryRead('Big5');
+    }
+    return text;
+  }).then(text => processCSV(text, file.name));
+}
+
+function parseCSVLine(line) {
+  const fields = [];
+  let cur = '', inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') { inQ = !inQ; }
+    else if (c === ',' && !inQ) { fields.push(cur.trim()); cur = ''; }
+    else { cur += c; }
   }
-});
+  fields.push(cur.trim());
+  return fields;
+}
+
+function toNum(s) {
+  return parseFloat(String(s||'').replace(/,/g,'').replace(/%/g,'')) || 0;
+}
+
+function toDate(s) {
+  return String(s||'').replace(/\//g,'-').slice(0,10);
+}
+
+function processCSV(text, fname) {
+  const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+  if (!lines.length) { ulog('❌ 檔案內容是空的', 'lr'); return; }
+
+  const hdrs = parseCSVLine(lines[0]);
+  const isTx  = hdrs.some(h => h === '委託書號');
+  const isPos = hdrs.some(h => h === '股票名稱') && hdrs.some(h => h === '市價');
+
+  if (isTx) {
+    ulog(`✅ 偵測為「對帳單」格式 — 共 ${lines.length - 1} 行`, 'lg');
+    parseTxCSV(lines, hdrs);
+  } else if (isPos) {
+    ulog(`✅ 偵測為「未實現彙總」格式 — 共 ${lines.length - 1} 行`, 'lg');
+    parsePosCSV(lines, hdrs);
+  } else {
+    ulog(`❌ 無法識別格式（表頭：${hdrs.slice(0,5).join(' | ')}）`, 'lr');
+    ulog('　請確認上傳的是「證券對帳單」或「未實現損益彙總」CSV。', 'lr');
+  }
+}
+
+// ── Parse 對帳單
+function parseTxCSV(lines, hdrs) {
+  const idx = {};
+  hdrs.forEach((h,i) => idx[h] = i);
+
+  const existOids = new Set(_TRADES.filter(t => t.oid).map(t => t.oid));
+  // Build composite keys for trades without oid (to avoid duplicating them)
+  const existComposite = new Set(
+    _TRADES.filter(t => !t.oid).map(t => `${t.date}_${t.stock}_${t.net}`)
+  );
+
+  let added = 0, skipped = 0, invalid = 0;
+  const newTrades = [];
+
+  for (let i = 1; i < lines.length; i++) {
+    const row = parseCSVLine(lines[i]);
+    if (row.length < 4) continue;
+
+    const stock = (row[idx['股名']] || '').trim();
+    const oid   = (row[idx['委託書號']] || '').trim();
+    if (!stock || stock.startsWith('總') || !oid) { invalid++; continue; }
+
+    if (existOids.has(oid)) { skipped++; continue; }
+
+    const net = toNum(row[idx['淨收付']]);
+    const composite = `${toDate(row[idx['日期']])}_${stock}_${net}`;
+    if (existComposite.has(composite)) { skipped++; continue; }
+
+    const t = {
+      date:   toDate(row[idx['日期']]),
+      stock,
+      action: net >= 0 ? 'SELL' : 'BUY',
+      price:  toNum(row[idx['成交單價']]),
+      shares: Math.abs(toNum(row[idx['成交股數']])),
+      net,
+      fee:    toNum(row[idx['手續費']]),
+      tax:    toNum(row[idx['交易稅']]),
+      oid,
+      note:   (row[idx['備註']] || '').trim(),
+    };
+    newTrades.push(t);
+    existOids.add(oid);
+    existComposite.add(composite);
+    added++;
+  }
+
+  if (added > 0) {
+    _TRADES = [...newTrades.reverse(), ..._TRADES]; // newest first in source
+    ulog(`➕ 新增 ${added} 筆交易`, 'lg');
+    newTrades.forEach(t => ulog(`   ${t.date} ${t.stock} ${t.action==='BUY'?'買':'賣'} ${fmt(t.shares)}股 @${t.price}`));
+    renderAll();
+    document.getElementById("card-tx").classList.add("done");
+  } else {
+    ulog(`　無新交易（跳過重複 ${skipped} 筆）`, 'lw');
+  }
+  if (skipped) ulog(`⏩ 重複跳過 ${skipped} 筆`);
+}
+
+// ── Parse 未實現彙總
+const ETF_NAMES = new Set([
+  '元大台灣50','富邦台50','國泰永續高股息','群益台灣精選高息',
+  '復華富時不動產','元大高股息','國泰台灣5G+','富邦台灣採礦&冶煉',
+]);
+
+function parsePosCSV(lines, hdrs) {
+  const idx = {};
+  hdrs.forEach((h,i) => idx[h] = i);
+
+  const newPos = [];
+  for (let i = 1; i < lines.length; i++) {
+    const row = parseCSVLine(lines[i]);
+    if (row.length < 6) continue;
+
+    const stock  = (row[0] || '').trim();
+    if (!stock || stock.startsWith('總') || stock.startsWith('合計')) continue;
+
+    const shares = toNum(row[idx['股數']]);
+    if (!shares) continue;
+
+    const avgCost = toNum(row[idx['成交均價']]);
+    const price   = toNum(row[idx['市價']]);
+    const value   = toNum(row[idx['現值']]);
+    const pnl     = toNum(row[idx['預估損益']]);
+    const pct     = toNum(row[idx['報酬率']]);
+
+    const existing = _POSITIONS.find(p => p.stock === stock);
+    newPos.push({
+      stock,
+      code:  existing?.code || '—',
+      type:  existing?.type || (ETF_NAMES.has(stock) ? 'ETF' : '股票'),
+      shares, avgCost, price, value, pnl, pct,
+    });
+  }
+
+  if (!newPos.length) { ulog('❌ 未解析到持倉資料', 'lr'); return; }
+
+  _POSITIONS = newPos;
+  ulog(`✅ 持倉已更新（${newPos.length} 檔）`, 'lg');
+  newPos.forEach(p =>
+    ulog(`   ${p.stock}：${sign(p.pnl)}${fmt(p.pnl)}（${sign(p.pct)}${fmtD(p.pct)}%）`, cls(p.pnl)==='up'?'lg':'lr')
+  );
+  renderAll();
+  document.getElementById("card-pos").classList.add("done");
+}
+
+// ─────────────────────────────────────────────
+// Boot
+// ─────────────────────────────────────────────
+renderAll();
 </script>
 </body>
 </html>
