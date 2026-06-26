@@ -911,8 +911,24 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // ─────────────────────────────────────────────
-// Boot
+// Boot — auto-setup from URL hash #setup:GISTID:TOKEN
 // ─────────────────────────────────────────────
+(function autoSetup() {
+  const hash = location.hash;
+  if (!hash.startsWith('#setup:')) return;
+  const rest  = hash.slice(7); // remove "#setup:"
+  const colon = rest.indexOf(':');
+  if (colon < 0) return;
+  const gistId = rest.slice(0, colon);
+  const token  = rest.slice(colon + 1);
+  if (gistId && token) {
+    localStorage.setItem(GIST_ID_KEY,    gistId);
+    localStorage.setItem(GIST_TOKEN_KEY, token);
+    history.replaceState(null, '', location.pathname); // remove hash from URL
+    console.log('✅ 同步設定已自動完成');
+  }
+})();
+
 renderAll();
 loadFromGist().then(() => {
   renderAll();
