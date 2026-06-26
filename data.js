@@ -17,7 +17,6 @@ const POSITIONS = [
 
 // ── 已實現損益摘要（每次出清一筆時新增）──────────────────────────
 const REALIZED = [
-  { stock:"富邦台50",    buyDate:"—",        sellDate:"持有中", cost:0,       proceeds:0,      pnl:1633467, pct:149.60, note:"前期長線持有" },
   { stock:"世芯-KY",    buyDate:"前期",      sellDate:"2026-01-29", cost:0,   proceeds:172590, pnl:172590,  pct:0,      note:"前期持有出清" },
   { stock:"達麗",       buyDate:"前期",      sellDate:"2026-01-02", cost:0,   proceeds:157366, pnl:157366,  pct:0,      note:"前期持有出清" },
   { stock:"聯發科",     buyDate:"2026-04-14",sellDate:"2026-06-08", cost:69200,proceeds:167300,pnl:98100,   pct:141.76, note:"長波段，計畫完整" },
