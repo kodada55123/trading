@@ -168,10 +168,104 @@ tr:hover td{background:rgba(255,255,255,.03);}
 .rule-tag{font-size:11px;padding:1px 8px;border-radius:10px;background:rgba(248,81,73,.15);color:var(--red);}
 .rule-tag.ok{background:rgba(63,185,80,.15);color:var(--green);}
 
-@media(max-width:640px){
-  .card-val{font-size:18px;}
-  .cards{grid-template-columns:repeat(2,1fr);}
+/* Mobile nav hidden by default, shown via mobile media query */
+.mobile-nav{display:none;}
+
+/* ═══════════════════════════════
+   Responsive — Tablet (≤900px)
+═══════════════════════════════ */
+@media(max-width:900px){
+  .charts{grid-template-columns:1fr;}
+  .chart-box[style*="grid-column"]{grid-column:1!important;}
+  .sync-fields{grid-template-columns:1fr;}
 }
+
+/* ═══════════════════════════════
+   Responsive — Mobile (≤640px)
+═══════════════════════════════ */
+@media(max-width:640px){
+  /* ── Layout ── */
+  .container{padding:0 12px;}
+  body{font-size:13px;}
+  h2{font-size:14px;margin:14px 0 10px;}
+
+  /* ── Header: compact, nav hidden (replaced by bottom bar) ── */
+  header{padding:9px 0;}
+  .nav{display:none;}               /* hide top nav on mobile */
+  .logo{font-size:15px;}
+  .sync-bar{font-size:11px;gap:5px;}
+  #sync-text{display:none;}         /* show dot only */
+
+  /* ── Bottom Navigation Bar ── */
+  .mobile-nav{
+    display:flex;
+    position:fixed;bottom:0;left:0;right:0;
+    background:var(--bg2);border-top:1px solid var(--border);
+    z-index:200;padding:0;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  .mobile-nav button{
+    flex:1;display:flex;flex-direction:column;align-items:center;
+    gap:2px;padding:8px 2px 6px;background:none;border:none;
+    color:var(--muted);font-size:10px;cursor:pointer;
+    border-top:2px solid transparent;transition:.15s;
+    font-family:inherit;
+  }
+  .mobile-nav button .mn-icon{font-size:18px;line-height:1;}
+  .mobile-nav button.active{color:var(--blue);border-top-color:var(--blue);}
+  .container{padding-bottom:80px!important;}
+
+  /* ── Cards: 2 columns ── */
+  .cards{grid-template-columns:repeat(2,1fr);gap:8px;margin:14px 0;}
+  .card{padding:11px 12px;}
+  .card-label{font-size:10px;}
+  .card-val{font-size:16px;}
+  .card-sub{font-size:11px;}
+
+  /* ── Tables: hide non-essential columns ── */
+  .tbl-wrap{-webkit-overflow-scrolling:touch;border-radius:8px;}
+  th,td{padding:8px 9px;font-size:12px;}
+
+  /* Positions: hide 類別(2), 均價(4) */
+  #tbl-positions th:nth-child(2),#tbl-positions td:nth-child(2),
+  #tbl-positions th:nth-child(4),#tbl-positions td:nth-child(4),
+  #tbl-pos-dash  th:nth-child(2),#tbl-pos-dash  td:nth-child(2),
+  #tbl-pos-dash  th:nth-child(4),#tbl-pos-dash  td:nth-child(4){display:none;}
+
+  /* Realized: hide 買入日(2) */
+  #tbl-realized th:nth-child(2),#tbl-realized td:nth-child(2){display:none;}
+
+  /* Trades: hide 手續費(7), 交易稅(8), 備註(9) */
+  #tbl-trades th:nth-child(7),#tbl-trades td:nth-child(7),
+  #tbl-trades th:nth-child(8),#tbl-trades td:nth-child(8),
+  #tbl-trades th:nth-child(9),#tbl-trades td:nth-child(9){display:none;}
+
+  /* ── Charts ── */
+  .chart-box{padding:12px;}
+  #chart-pnl{height:140px!important;}
+
+  /* ── Journal ── */
+  .j-header{padding:10px 12px;gap:6px;}
+  .j-stock{font-size:14px;}
+  .j-body{padding:10px 12px;}
+  .j-row{gap:6px;padding:5px 0;}
+  .j-row-date{min-width:78px;font-size:11px;}
+  .j-row-shares{min-width:55px;}
+  .j-row-price{min-width:65px;}
+  .j-row-net{margin-left:0;}
+  .j-note{font-size:13px;min-height:80px;}
+
+  /* ── Filters ── */
+  .filters input,.filters select{font-size:12px;padding:5px 8px;}
+  .filters{gap:6px;}
+
+  /* ── Upload ── */
+  .paste-wrap{padding:12px;}
+  .paste-wrap textarea{min-height:150px;font-size:11px;}
+  .sync-setup{padding:14px;}
+  .sync-step{font-size:12px;}
+}
+
 </style>
 </head>
 <body>
@@ -322,6 +416,28 @@ tr:hover td{background:rgba(255,255,255,.03);}
 
 </div><!-- /container -->
 
+<!-- ── Mobile Bottom Nav ── -->
+<nav class="mobile-nav" id="mobile-nav">
+  <button class="active" onclick="showSection('dashboard',this)">
+    <span class="mn-icon">📊</span>總覽
+  </button>
+  <button onclick="showSection('positions',this)">
+    <span class="mn-icon">📁</span>持倉
+  </button>
+  <button onclick="showSection('realized',this)">
+    <span class="mn-icon">✅</span>已實現
+  </button>
+  <button onclick="showSection('trades',this)">
+    <span class="mn-icon">📋</span>交易
+  </button>
+  <button onclick="showSection('journal',this)">
+    <span class="mn-icon">📝</span>筆記
+  </button>
+  <button onclick="showSection('upload',this)">
+    <span class="mn-icon">⬆</span>更新
+  </button>
+</nav>
+
 <script>
 // ─────────────────────────────────────────────
 // Helpers
@@ -368,9 +484,13 @@ function mkChart(id, cfg) {
 // ─────────────────────────────────────────────
 function showSection(id, btn) {
   document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
-  document.querySelectorAll(".nav button").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll(".nav button, .mobile-nav button").forEach(b => b.classList.remove("active"));
   document.getElementById("section-" + id).classList.add("active");
   if (btn) btn.classList.add("active");
+  // Sync the other nav (desktop ↔ mobile)
+  document.querySelectorAll(`.nav button, .mobile-nav button`).forEach(b => {
+    if (b !== btn && b.getAttribute("onclick")?.includes(`'${id}'`)) b.classList.add("active");
+  });
   if (id === 'journal') renderJournal();
 }
 
