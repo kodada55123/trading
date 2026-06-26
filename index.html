@@ -80,6 +80,25 @@ tr:hover td{background:rgba(255,255,255,.03);}
 .btn.primary:hover{opacity:.88;}
 .btn.danger{border-color:var(--red);color:var(--red);}
 
+/* ── Sync ── */
+.sync-bar{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex-shrink:0;}
+.sync-dot.ok{background:var(--green);}
+.sync-dot.err{background:var(--red);}
+.sync-dot.busy{background:var(--gold);animation:pulse .8s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.sync-setup{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:20px;}
+.sync-setup h3{margin:0 0 6px;font-size:14px;color:#fff;}
+.sync-setup p{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px;}
+.sync-steps{counter-reset:step;margin-bottom:14px;}
+.sync-step{counter-increment:step;display:flex;gap:10px;margin-bottom:10px;font-size:13px;color:var(--text);}
+.sync-step::before{content:counter(step);background:var(--blue);color:#000;font-weight:700;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:1px;}
+.sync-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+@media(max-width:600px){.sync-fields{grid-template-columns:1fr;}}
+.sync-fields label{font-size:11px;color:var(--muted);display:block;margin-bottom:3px;}
+.sync-fields input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:7px 10px;font-size:13px;outline:none;font-family:monospace;}
+.sync-fields input:focus{border-color:var(--blue);}
+
 /* ── Upload (text paste) ── */
 .paste-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;}
 .paste-wrap textarea{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:"SF Mono",Menlo,monospace;font-size:12px;padding:12px;resize:vertical;outline:none;min-height:220px;line-height:1.5;}
@@ -169,7 +188,13 @@ tr:hover td{background:rgba(255,255,255,.03);}
         <button onclick="showSection('journal',this)">交易筆記</button>
         <button class="accent" onclick="showSection('upload',this)">⬆ 資料更新</button>
       </div>
-      <div class="updated">更新：<span id="updated-date"></span></div>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <div class="updated">更新：<span id="updated-date"></span></div>
+        <div class="sync-bar" id="sync-bar">
+          <span class="sync-dot" id="sync-dot"></span>
+          <span id="sync-text">同步未設定</span>
+        </div>
+      </div>
     </div>
   </div>
 </header>
@@ -244,7 +269,42 @@ tr:hover td{background:rgba(255,255,255,.03);}
 
   <!-- ═══════════ UPLOAD ═══════════ -->
   <div id="section-upload" class="section">
-    <h2>資料更新</h2>
+
+    <!-- Gist Sync Setup -->
+    <h2>跨裝置同步設定</h2>
+    <div class="sync-setup">
+      <h3>GitHub Gist 同步</h3>
+      <p>筆記將儲存在你的 GitHub Gist，電腦與手機自動同步。只需設定一次。</p>
+      <div class="sync-steps">
+        <div class="sync-step">
+          前往 <a href="https://github.com/settings/tokens/new?scopes=gist&description=trading-journal" target="_blank">github.com/settings/tokens</a>，勾選 <strong>gist</strong> 權限，建立 Token 並複製。
+        </div>
+        <div class="sync-step">
+          前往 <a href="https://gist.github.com" target="_blank">gist.github.com</a>，建立新 Secret Gist：檔名填 <code style="background:var(--bg3);padding:1px 5px;border-radius:3px;">notes.json</code>，內容填 <code style="background:var(--bg3);padding:1px 5px;border-radius:3px;">{}</code>，點「Create secret gist」。
+        </div>
+        <div class="sync-step">
+          複製 Gist 頁面網址中的 ID（網址最後那段 32 位英數字），填入下方。
+        </div>
+      </div>
+      <div class="sync-fields">
+        <div>
+          <label>GitHub Personal Access Token</label>
+          <input type="password" id="gist-token" placeholder="ghp_xxxxxxxxxxxx">
+        </div>
+        <div>
+          <label>Gist ID（網址最後 32 碼）</label>
+          <input type="text" id="gist-id" placeholder="a1b2c3d4e5f6...">
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn primary" onclick="saveGistConfig()">儲存並測試連線</button>
+        <button class="btn" onclick="manualSync()">立即同步</button>
+        <button class="btn danger" onclick="clearGistConfig()">清除設定</button>
+      </div>
+      <div id="sync-result" style="margin-top:10px;font-size:13px;color:var(--muted);"></div>
+    </div>
+
+    <h2>匯入券商資料</h2>
     <p style="color:var(--muted);font-size:13px;margin-bottom:14px;">
       將券商網站的 CSV 內容貼入下方文字框，系統自動識別格式並更新。<br>
       支援「證券對帳單」與「未實現損益彙總」兩種格式。
@@ -708,9 +768,155 @@ function parsePosCSV(lines, hdrs) {
 }
 
 // ─────────────────────────────────────────────
+// GitHub Gist Sync
+// ─────────────────────────────────────────────
+const GIST_TOKEN_KEY = 'gist_token';
+const GIST_ID_KEY    = 'gist_id';
+const NOTE_PREFIXES  = ['note_', 'journal_'];
+
+function isNoteKey(k) { return NOTE_PREFIXES.some(p => k.startsWith(p)); }
+
+function setSyncStatus(state, text) {
+  const dot  = document.getElementById('sync-dot');
+  const span = document.getElementById('sync-text');
+  if (!dot || !span) return;
+  dot.className  = 'sync-dot' + (state ? ' '+state : '');
+  span.textContent = text;
+}
+
+function getGistConfig() {
+  return {
+    token:  localStorage.getItem(GIST_TOKEN_KEY) || '',
+    gistId: localStorage.getItem(GIST_ID_KEY)    || '',
+  };
+}
+
+async function gistFetch(method, body) {
+  const { token, gistId } = getGistConfig();
+  if (!token || !gistId) return null;
+  try {
+    const res = await fetch(`https://api.github.com/gists/${gistId}`, {
+      method,
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/vnd.github+json',
+      },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch { return null; }
+}
+
+function collectNotes() {
+  const notes = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (isNoteKey(k)) notes[k] = localStorage.getItem(k);
+  }
+  return notes;
+}
+
+async function loadFromGist() {
+  const { token, gistId } = getGistConfig();
+  if (!token || !gistId) { setSyncStatus('', '同步未設定'); return; }
+  setSyncStatus('busy', '同步中…');
+  const data = await gistFetch('GET');
+  if (!data) { setSyncStatus('err', '連線失敗'); return; }
+  const content = data.files?.['notes.json']?.content;
+  if (content) {
+    try {
+      const remote = JSON.parse(content);
+      Object.entries(remote).forEach(([k,v]) => { if (isNoteKey(k)) localStorage.setItem(k, v); });
+    } catch {}
+  }
+  const ts = new Date().toLocaleTimeString('zh-TW', {hour:'2-digit', minute:'2-digit'});
+  setSyncStatus('ok', `已同步 ${ts}`);
+}
+
+async function syncToGist() {
+  const { token, gistId } = getGistConfig();
+  if (!token || !gistId) return;
+  setSyncStatus('busy', '儲存中…');
+  const notes   = collectNotes();
+  const result  = await gistFetch('PATCH', {
+    files: { 'notes.json': { content: JSON.stringify(notes, null, 2) } }
+  });
+  const ts = new Date().toLocaleTimeString('zh-TW', {hour:'2-digit', minute:'2-digit'});
+  setSyncStatus(result ? 'ok' : 'err', result ? `已同步 ${ts}` : '同步失敗');
+}
+
+async function saveGistConfig() {
+  const token  = document.getElementById('gist-token').value.trim();
+  const gistId = document.getElementById('gist-id').value.trim();
+  const result = document.getElementById('sync-result');
+  if (!token || !gistId) { result.textContent = '❌ 請填寫 Token 和 Gist ID'; result.style.color='var(--red)'; return; }
+  localStorage.setItem(GIST_TOKEN_KEY, token);
+  localStorage.setItem(GIST_ID_KEY, gistId);
+  result.textContent = '測試連線中…';
+  result.style.color = 'var(--muted)';
+  const data = await gistFetch('GET');
+  if (!data) {
+    result.textContent = '❌ 連線失敗，請確認 Token 和 Gist ID 正確';
+    result.style.color = 'var(--red)';
+    setSyncStatus('err', '連線失敗');
+    return;
+  }
+  if (!data.files?.['notes.json']) {
+    result.textContent = '⚠ Gist 找到了，但請確認檔名為 notes.json';
+    result.style.color = 'var(--gold)';
+    return;
+  }
+  result.textContent = '✅ 連線成功！正在從 Gist 載入筆記…';
+  result.style.color = 'var(--green)';
+  await loadFromGist();
+  renderAll();
+  if (document.getElementById('section-journal')?.classList.contains('active')) renderJournal();
+  result.textContent = '✅ 設定完成，筆記已同步！往後每次儲存筆記都會自動同步。';
+}
+
+async function manualSync() {
+  const result = document.getElementById('sync-result');
+  if (result) { result.textContent = '同步中…'; result.style.color='var(--muted)'; }
+  await loadFromGist();
+  await syncToGist();
+  renderAll();
+  if (result) { result.textContent = '✅ 同步完成'; result.style.color='var(--green)'; }
+}
+
+function clearGistConfig() {
+  if (!confirm('確定清除同步設定？（筆記內容不會刪除）')) return;
+  localStorage.removeItem(GIST_TOKEN_KEY);
+  localStorage.removeItem(GIST_ID_KEY);
+  document.getElementById('gist-token').value = '';
+  document.getElementById('gist-id').value = '';
+  setSyncStatus('', '同步未設定');
+  const result = document.getElementById('sync-result');
+  if (result) { result.textContent = '已清除設定'; result.style.color='var(--muted)'; }
+}
+
+// Patch note-save functions to also sync
+const _origNoteBlur = onNoteBlur;
+onNoteBlur = function(el) { _origNoteBlur(el); syncToGist(); };
+
+const _origJournalBlur = onJournalBlur;
+onJournalBlur = function(el) { _origJournalBlur(el); syncToGist(); };
+
+// Pre-fill saved config in UI
+window.addEventListener('DOMContentLoaded', () => {
+  const { token, gistId } = getGistConfig();
+  if (token) document.getElementById('gist-token').value = token;
+  if (gistId) document.getElementById('gist-id').value  = gistId;
+});
+
+// ─────────────────────────────────────────────
 // Boot
 // ─────────────────────────────────────────────
 renderAll();
+loadFromGist().then(() => {
+  renderAll();
+});
 </script>
 </body>
 </html>
