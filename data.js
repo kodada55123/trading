@@ -5,14 +5,14 @@ const LAST_UPDATED = "2026-06-29";
 
 // ── 未實現持倉（每次更新此區塊）─────────────────────────────────
 const POSITIONS = [
-  { stock:"富邦台50",       code:"006208", type:"ETF",  shares:11000, avgCost:99.23,   price:238.7,  value:2622096, pnl:1530196, pct:140.14 },
-  { stock:"國泰永續高股息", code:"00878",  type:"ETF",  shares:31000, avgCost:22.01,   price:32.71,  value:1012605, pnl:330123,  pct:48.37  },
-  { stock:"元大台灣50",     code:"0050",   type:"ETF",  shares:8000,  avgCost:61.76,   price:103.1,  value:823656,  pnl:329392,  pct:66.64  },
-  { stock:"群益台灣精選高息",code:"00919", type:"ETF",  shares:6000,  avgCost:22.57,   price:29.56,  value:177116,  pnl:41674,   pct:30.77  },
-  { stock:"復華富時不動產", code:"00712",  type:"ETF",  shares:12000, avgCost:9.61,    price:8.63,   value:103423,  pnl:-11982,  pct:-10.38 },
-  { stock:"祥碩",           code:"5269",   type:"股票", shares:120,   avgCost:1484.75, price:1485.0, value:178200,  pnl:30,      pct:0.02   },
-  { stock:"聯策",           code:"6299",   type:"股票", shares:1400,  avgCost:211.16,  price:213.0,  value:298200,  pnl:2573,    pct:0.87   },
-  { stock:"群聯",           code:"8299",   type:"股票", shares:80,    avgCost:2463.13, price:2310.0, value:184176,  pnl:-12950,  pct:-6.57  },
+  { stock:"富邦台50",         code:"006208", type:"ETF",  shares:11000, avgCost:99.23,   price:242.75, value:2666568, pnl:1574668, pct:144.21 },
+  { stock:"國泰永續高股息",   code:"00878",  type:"ETF",  shares:31000, avgCost:22.01,   price:32.90,  value:1018495, pnl:336013,  pct:49.23  },
+  { stock:"元大台灣50",       code:"0050",   type:"ETF",  shares:8000,  avgCost:61.76,   price:104.45, value:834445,  pnl:340181,  pct:68.83  },
+  { stock:"群益台灣精選高息", code:"00919",  type:"ETF",  shares:6000,  avgCost:22.57,   price:29.46,  value:176518,  pnl:41076,   pct:30.33  },
+  { stock:"復華富時不動產",   code:"00712",  type:"ETF",  shares:12000, avgCost:9.61,    price:8.77,   value:105103,  pnl:-10302,  pct:-8.93  },
+  { stock:"祥碩",             code:"5269",   type:"股票", shares:120,   avgCost:1484.17, price:1475.0, value:176401,  pnl:-1769,   pct:-0.99  },
+  { stock:"聯策",             code:"6299",   type:"股票", shares:1400,  avgCost:211.16,  price:213.0,  value:297191,  pnl:1450,    pct:0.49   },
+  { stock:"群聯",             code:"8299",   type:"股票", shares:80,    avgCost:2463.13, price:2340.0, value:186567,  pnl:-10559,  pct:-5.36  },
 ];
 
 // ── 已實現損益摘要（每次出清一筆時新增）──────────────────────────
