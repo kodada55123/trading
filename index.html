@@ -787,24 +787,34 @@ function toNum(s) { return parseFloat(String(s||'').replace(/,/g,'').replace(/%/
 function toDate(s) { return String(s||'').replace(/\//g,'-').slice(0,10); }
 
 function processCSV(text) {
-  const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l);
-  if (!lines.length) { ulog('❌ 內容為空', 'lr'); return; }
+  // Strip BOM and normalize line endings
+  text = text.replace(/^﻿/, '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
 
-  const hdrs  = parseCSVLine(lines[0]);
-  const isTx  = hdrs.some(h => h === '委託書號');
-  const isPos = hdrs.some(h => h === '股票名稱') && hdrs.some(h => h === '市價');
+  // Split into blocks by blank lines (handles multiple CSVs pasted together)
+  const blocks = text.split(/\n\s*\n/).map(b => b.trim()).filter(b => b.length > 0);
 
-  if (isTx) {
-    ulog(`✅ 偵測到「對帳單」格式（${lines.length-1} 行）`, 'lg');
-    parseTxCSV(lines, hdrs);
-  } else if (isPos) {
-    ulog(`✅ 偵測到「未實現彙總」格式（${lines.length-1} 行）`, 'lg');
-    parsePosCSV(lines, hdrs);
-  } else {
-    ulog(`❌ 無法識別格式`, 'lr');
-    ulog(`　表頭：${hdrs.slice(0,6).join(' | ')}`, 'lr');
-    ulog(`　請確認是「對帳單」或「未實現損益彙總」的 CSV 內容`, 'lr');
-  }
+  if (!blocks.length) { ulog('❌ 內容為空', 'lr'); return; }
+
+  blocks.forEach((block, bi) => {
+    const lines = block.split('\n').map(l => l.trim()).filter(l => l);
+    if (!lines.length) return;
+
+    const hdrs = parseCSVLine(lines[0]);
+    // Use includes() for robust matching (handles invisible chars / encoding variants)
+    const isTx  = hdrs.some(h => h.includes('委託書號'));
+    const isPos = hdrs.some(h => h.includes('股票名稱')) && hdrs.some(h => h.includes('市價'));
+
+    if (isTx) {
+      ulog(`✅ 區塊${bi+1}：偵測到「對帳單」格式（${lines.length-1} 行）`, 'lg');
+      parseTxCSV(lines, hdrs);
+    } else if (isPos) {
+      ulog(`✅ 區塊${bi+1}：偵測到「未實現彙總」格式（${lines.length-1} 行）`, 'lg');
+      parsePosCSV(lines, hdrs);
+    } else {
+      ulog(`⚠ 區塊${bi+1}：無法識別格式，跳過`, 'lw');
+      ulog(`　表頭：${hdrs.slice(0,4).join(' | ')}`, 'lw');
+    }
+  });
 }
 
 function parseTxCSV(lines, hdrs) {

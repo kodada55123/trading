@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════
 // data.js  ──  每日更新此檔案即可，勿修改 index.html 的邏輯
 // ═══════════════════════════════════════════════════════════════
-const LAST_UPDATED = "2026-06-26";
+const LAST_UPDATED = "2026-06-29";
 
 // ── 未實現持倉（每次更新此區塊）─────────────────────────────────
 const POSITIONS = [
@@ -10,8 +10,8 @@ const POSITIONS = [
   { stock:"元大台灣50",     code:"0050",   type:"ETF",  shares:8000,  avgCost:61.76,   price:103.1,  value:823656,  pnl:329392,  pct:66.64  },
   { stock:"群益台灣精選高息",code:"00919", type:"ETF",  shares:6000,  avgCost:22.57,   price:29.56,  value:177116,  pnl:41674,   pct:30.77  },
   { stock:"復華富時不動產", code:"00712",  type:"ETF",  shares:12000, avgCost:9.61,    price:8.63,   value:103423,  pnl:-11982,  pct:-10.38 },
-  { stock:"聯策",           code:"6299",   type:"股票", shares:1296,  avgCost:211.57,  price:213.0,  value:275113,  pnl:804,     pct:0.29   },
-  { stock:"力智",           code:"6719",   type:"股票", shares:1500,  avgCost:279.24,  price:266.0,  value:397648,  pnl:-21378,  pct:-5.10  },
+  { stock:"祥碩",           code:"5269",   type:"股票", shares:120,   avgCost:1484.75, price:1485.0, value:178200,  pnl:30,      pct:0.02   },
+  { stock:"聯策",           code:"6299",   type:"股票", shares:1400,  avgCost:211.16,  price:213.0,  value:298200,  pnl:2573,    pct:0.87   },
   { stock:"群聯",           code:"8299",   type:"股票", shares:80,    avgCost:2463.13, price:2310.0, value:184176,  pnl:-12950,  pct:-6.57  },
 ];
 
@@ -38,10 +38,19 @@ const REALIZED = [
   { stock:"富鼎",       buyDate:"2026-06-12",sellDate:"2026-06-26", cost:173069,proceeds:249151,pnl:76082,  pct:43.96,  note:"47天，+43.96%" },
   { stock:"順德",       buyDate:"2026-06-18",sellDate:"2026-06-26", cost:256152,proceeds:265197,pnl:9045,   pct:3.53,   note:"8天，+3.53%" },
   { stock:"博智",       buyDate:"2026-06-16",sellDate:"2026-06-26", cost:121373,proceeds:113188,pnl:-8185,  pct:-6.74,  note:"10天，-6.74%，均價過高" },
+  // ── 2026-06-29 新增 ──
+  { stock:"力智",       buyDate:"2026-06-23",sellDate:"2026-06-29", cost:418860,proceeds:387710,pnl:-31150, pct:-7.44,  note:"6天，-7.44%，停損出清" },
 ];
 
 // ── 交易明細（從對帳單匯入，action: BUY/SELL）────────────────────
 const TRADES = [
+  // 2026-06-29
+  { date:"2026-06-29", stock:"祥碩",  action:"BUY",  price:1485,  shares:100,  net:-148559, fee:59,  tax:0,   note:"", oid:"r0BDX" },
+  { date:"2026-06-29", stock:"祥碩",  action:"BUY",  price:1480,  shares:20,   net:-29611,  fee:11,  tax:0,   note:"", oid:"r0BTd" },
+  { date:"2026-06-29", stock:"聯策",  action:"BUY",  price:206,   shares:104,  net:-21432,  fee:8,   tax:0,   note:"加碼", oid:"r09dI" },
+  { date:"2026-06-29", stock:"力智",  action:"SELL", price:260,   shares:1000, net:259117,  fee:103, tax:780, note:"停損出清", oid:"an563" },
+  { date:"2026-06-29", stock:"力智",  action:"SELL", price:259.5, shares:20,   net:5173,    fee:2,   tax:15,  note:"", oid:"r09YZ" },
+  { date:"2026-06-29", stock:"力智",  action:"SELL", price:258,   shares:480,  net:123420,  fee:49,  tax:371, note:"", oid:"r09je" },
   // 2026-06-26
   { date:"2026-06-26", stock:"順德",  action:"SELL", price:204,   shares:1000, net:203307,  fee:81,  tax:612, note:"全數出清，+3.53%" },
   { date:"2026-06-26", stock:"順德",  action:"SELL", price:207,   shares:300,  net:61890,   fee:24,  tax:186, note:"" },
