@@ -262,6 +262,7 @@ tr:hover td{background:rgba(255,255,255,.03);}
   /* ── Upload ── */
   .paste-wrap{padding:12px;}
   .paste-wrap textarea{min-height:150px;font-size:11px;}
+  .import-grid{grid-template-columns:1fr!important;}
   .sync-setup{padding:14px;}
   .sync-step{font-size:12px;}
 }
@@ -399,17 +400,37 @@ tr:hover td{background:rgba(255,255,255,.03);}
     </div>
 
     <h2>匯入券商資料</h2>
-    <p style="color:var(--muted);font-size:13px;margin-bottom:14px;">
-      將券商網站的 CSV 內容貼入下方文字框，系統自動識別格式並更新。<br>
-      支援「證券對帳單」與「未實現損益彙總」兩種格式。
-    </p>
-    <div class="paste-wrap">
-      <textarea id="csv-paste" placeholder="貼上 CSV 內容（Ctrl+A 全選複製後貼上）…&#10;&#10;格式一（對帳單）：股名,日期,成交股數,淨收付,成交單價,…,委託書號,…&#10;格式二（未實現）：股票名稱,股數,總損益,交易別,成交均價,市價,…"></textarea>
-      <div class="paste-actions">
-        <button class="btn primary" onclick="parsePastedCSV()">解析並更新</button>
-        <button class="btn" onclick="document.getElementById('csv-paste').value=''">清除</button>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;" class="import-grid">
+
+      <!-- 對帳單 -->
+      <div>
+        <h3 style="margin:0 0 8px;font-size:14px;color:var(--text);">📋 證券對帳單</h3>
+        <p style="color:var(--muted);font-size:12px;margin:0 0 8px;">從券商網站複製「對帳單」CSV，貼入此框後點「匯入交易」</p>
+        <div class="paste-wrap">
+          <textarea id="csv-trades" placeholder="股名,日期,成交股數,淨收付,成交單價,…,委託書號,…&#10;&#10;直接從網頁全選複製貼上即可"></textarea>
+          <div class="paste-actions">
+            <button class="btn primary" onclick="importTrades()">匯入交易</button>
+            <button class="btn" onclick="document.getElementById('csv-trades').value=''">清除</button>
+          </div>
+        </div>
       </div>
+
+      <!-- 未實現 -->
+      <div>
+        <h3 style="margin:0 0 8px;font-size:14px;color:var(--text);">📊 未實現損益彙總</h3>
+        <p style="color:var(--muted);font-size:12px;margin:0 0 8px;">從券商複製「未實現損益彙總」CSV，貼入此框後點「更新持倉」</p>
+        <div class="paste-wrap">
+          <textarea id="csv-positions" placeholder="股票名稱,股數,成交均價,市價,現值,預估損益,報酬率,…&#10;&#10;直接從網頁全選複製貼上即可"></textarea>
+          <div class="paste-actions">
+            <button class="btn primary" onclick="importPositions()">更新持倉</button>
+            <button class="btn" onclick="document.getElementById('csv-positions').value=''">清除</button>
+          </div>
+        </div>
+      </div>
+
     </div>
+
     <div class="log-box" id="upload-log">等待貼上內容…
 </div>
   </div>
@@ -765,10 +786,26 @@ function ulog(msg, cls='') {
   box.scrollTop = box.scrollHeight;
 }
 
-function parsePastedCSV() {
-  const text = document.getElementById("csv-paste").value.trim();
-  if (!text) { ulog('❌ 文字框是空的，請先貼上 CSV 內容', 'lr'); return; }
-  processCSV(text);
+function importTrades() {
+  const text = document.getElementById("csv-trades").value.trim();
+  if (!text) { ulog('❌ 請先貼上對帳單 CSV 內容', 'lr'); return; }
+  const clean = text.replace(/^﻿/, '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  const lines = clean.split('\n').map(l => l.trim()).filter(l => l);
+  if (lines.length < 2) { ulog('❌ 內容不足，請確認已貼上完整 CSV', 'lr'); return; }
+  const hdrs = parseCSVLine(lines[0]);
+  ulog(`── 對帳單匯入（${lines.length-1} 行）──`, 'lg');
+  parseTxCSV(lines, hdrs);
+}
+
+function importPositions() {
+  const text = document.getElementById("csv-positions").value.trim();
+  if (!text) { ulog('❌ 請先貼上未實現損益彙總 CSV 內容', 'lr'); return; }
+  const clean = text.replace(/^﻿/, '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  const lines = clean.split('\n').map(l => l.trim()).filter(l => l);
+  if (lines.length < 2) { ulog('❌ 內容不足，請確認已貼上完整 CSV', 'lr'); return; }
+  const hdrs = parseCSVLine(lines[0]);
+  ulog(`── 未實現持倉更新（${lines.length-1} 行）──`, 'lg');
+  parsePosCSV(lines, hdrs);
 }
 
 function parseCSVLine(line) {
@@ -867,33 +904,57 @@ const ETF_NAMES = new Set([
 ]);
 
 function parsePosCSV(lines, hdrs) {
-  const idx = {};
-  hdrs.forEach((h,i) => idx[h] = i);
+  // Flexible column finder — matches by substring to handle券商差異
+  function col(keywords) {
+    const k = Array.isArray(keywords) ? keywords : [keywords];
+    for (const kw of k) {
+      const h = hdrs.find(h => h.includes(kw));
+      if (h !== undefined) return hdrs.indexOf(h);
+    }
+    return -1;
+  }
+  const colStock  = col(['股票名稱','股名']);
+  const colShares = col(['股數','持股數量']);
+  const colAvg    = col(['成交均價','均價','買進均價']);
+  const colPrice  = col(['市價','現價','收盤價']);
+  const colValue  = col(['現值','市值','總市值']);
+  const colPnl    = col(['預估損益','損益','未實現損益']);
+  const colPct    = col(['報酬率','漲跌幅']);
+
+  // 印出偵測到的欄位（方便除錯）
+  ulog(`　欄位對應：股名[${colStock}] 股數[${colShares}] 均價[${colAvg}] 市價[${colPrice}]`);
+
   const newPos=[];
   for (let i=1; i<lines.length; i++) {
     const row = parseCSVLine(lines[i]);
-    if (row.length < 6) continue;
-    const stock = (row[0]||'').trim();
-    if (!stock || stock.startsWith('總') || stock.startsWith('合計')) continue;
-    const shares = toNum(row[idx['股數']]);
+    if (row.length < 4) continue;
+    // 支援股名在第 0 欄（有些券商沒有股票名稱欄，直接第一欄）
+    const stock = (colStock >= 0 ? row[colStock] : row[0] || '').trim();
+    if (!stock || stock.startsWith('總') || stock.startsWith('合計') || stock === '股票名稱' || stock === '股名') continue;
+    const shares = colShares >= 0 ? toNum(row[colShares]) : toNum(row[1]);
     if (!shares) continue;
     const existing = _POSITIONS.find(p => p.stock === stock);
     newPos.push({
       stock,
-      code:     existing?.code || '—',
-      type:     existing?.type || (ETF_NAMES.has(stock)?'ETF':'股票'),
+      code:    existing?.code || '—',
+      type:    existing?.type || (ETF_NAMES.has(stock)?'ETF':'股票'),
       shares,
-      avgCost:  toNum(row[idx['成交均價']]),
-      price:    toNum(row[idx['市價']]),
-      value:    toNum(row[idx['現值']]),
-      pnl:      toNum(row[idx['預估損益']]),
-      pct:      toNum(row[idx['報酬率']]),
+      avgCost: colAvg   >= 0 ? toNum(row[colAvg])   : 0,
+      price:   colPrice >= 0 ? toNum(row[colPrice])  : 0,
+      value:   colValue >= 0 ? toNum(row[colValue])  : 0,
+      pnl:     colPnl   >= 0 ? toNum(row[colPnl])   : 0,
+      pct:     colPct   >= 0 ? toNum(row[colPct])   : 0,
     });
   }
-  if (!newPos.length) { ulog('❌ 未解析到持倉資料', 'lr'); return; }
+  if (!newPos.length) {
+    ulog('❌ 未解析到持倉資料', 'lr');
+    ulog(`　表頭：${hdrs.join(' | ')}`, 'lr');
+    ulog('　請確認貼的是「未實現損益彙總」而非對帳單', 'lr');
+    return;
+  }
   _POSITIONS = newPos;
   ulog(`✅ 持倉已更新（${newPos.length} 檔）`, 'lg');
-  newPos.forEach(p => ulog(`   ${p.stock}：${sign(p.pnl)}${fmt(p.pnl)}（${sign(p.pct)}${fmtD(p.pct)}%）`, cls(p.pnl)==='up'?'lg':'lr'));
+  newPos.forEach(p => ulog(`   ${p.stock} ${p.shares}股 均價${p.avgCost} → ${sign(p.pnl)}${fmt(p.pnl)}（${sign(p.pct)}${fmtD(p.pct)}%）`, cls(p.pnl)==='up'?'lg':'lr'));
   renderAll();
 }
 
