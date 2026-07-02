@@ -889,6 +889,8 @@ function parseTxCSV(lines, hdrs) {
 
   if (added > 0) {
     _TRADES = [...newTrades.reverse(), ..._TRADES];
+    saveLocalData();
+    syncToGist();
     ulog(`➕ 新增 ${added} 筆交易`, 'lg');
     newTrades.forEach(t => ulog(`   ${t.date} ${t.stock} ${t.action==='BUY'?'買':'賣'} ${fmt(t.shares)}股 @${t.price}`));
     renderAll();
@@ -953,6 +955,8 @@ function parsePosCSV(lines, hdrs) {
     return;
   }
   _POSITIONS = newPos;
+  saveLocalData();
+  syncToGist();
   ulog(`✅ 持倉已更新（${newPos.length} 檔）`, 'lg');
   newPos.forEach(p => ulog(`   ${p.stock} ${p.shares}股 均價${p.avgCost} → ${sign(p.pnl)}${fmt(p.pnl)}（${sign(p.pct)}${fmtD(p.pct)}%）`, cls(p.pnl)==='up'?'lg':'lr'));
   renderAll();
@@ -964,8 +968,33 @@ function parsePosCSV(lines, hdrs) {
 const GIST_TOKEN_KEY = 'gist_token';
 const GIST_ID_KEY    = 'gist_id';
 const NOTE_PREFIXES  = ['note_', 'journal_'];
+const DATA_KEYS      = ['trades_data', 'positions_data'];
 
-function isNoteKey(k) { return NOTE_PREFIXES.some(p => k.startsWith(p)); }
+function isNoteKey(k) { return NOTE_PREFIXES.some(p => k.startsWith(p)) || DATA_KEYS.includes(k); }
+
+// 儲存匯入資料到 localStorage（頁面重整後也能保留）
+function saveLocalData() {
+  try {
+    localStorage.setItem('trades_data',    JSON.stringify(_TRADES));
+    localStorage.setItem('positions_data', JSON.stringify(_POSITIONS));
+  } catch(e) { console.warn('saveLocalData failed', e); }
+}
+
+// 啟動時從 localStorage 還原匯入資料
+function loadLocalData() {
+  try {
+    const td = localStorage.getItem('trades_data');
+    if (td) {
+      const parsed = JSON.parse(td);
+      // 只有 localStorage 的交易數 >= data.js 才採用（避免用舊快照蓋掉新 data.js）
+      if (parsed.length >= _TRADES.length) _TRADES = parsed;
+    }
+  } catch(e) {}
+  try {
+    const pd = localStorage.getItem('positions_data');
+    if (pd) _POSITIONS = JSON.parse(pd);
+  } catch(e) {}
+}
 
 function setSyncStatus(state, text) {
   const dot  = document.getElementById('sync-dot');
@@ -1020,6 +1049,9 @@ async function loadFromGist() {
     try {
       const remote = JSON.parse(content);
       Object.entries(remote).forEach(([k,v]) => { if (isNoteKey(k)) localStorage.setItem(k, v); });
+      // 還原交易與持倉資料
+      if (remote.trades_data)    { try { const t=JSON.parse(remote.trades_data);    if(t.length>=_TRADES.length)    _TRADES=t;    } catch{} }
+      if (remote.positions_data) { try { _POSITIONS=JSON.parse(remote.positions_data); } catch{} }
     } catch {}
   }
   const ts = new Date().toLocaleTimeString('zh-TW', {hour:'2-digit', minute:'2-digit'});
@@ -1120,6 +1152,7 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 })();
 
+loadLocalData();
 renderAll();
 loadFromGist().then(() => {
   renderAll();
