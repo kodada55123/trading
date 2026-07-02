@@ -399,6 +399,24 @@ tr:hover td{background:rgba(255,255,255,.03);}
       <div id="sync-result" style="margin-top:10px;font-size:13px;color:var(--muted);"></div>
     </div>
 
+    <!-- GitHub Repo Sync -->
+    <div class="sync-setup" style="margin-top:16px;">
+      <h3>📤 自動更新 data.js（寫回 GitHub）</h3>
+      <p>匯入對帳單或未實現後，自動 commit 回 GitHub repo，永久保存、所有裝置即時同步。</p>
+      <div class="sync-fields">
+        <div>
+          <label>GitHub Token（需有 public_repo 權限）</label>
+          <input type="password" id="repo-token" placeholder="ghp_xxxxxxxxxxxx">
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn primary" onclick="saveRepoToken()">儲存 Token</button>
+        <button class="btn" onclick="pushToGitHub()">立即同步至 GitHub</button>
+        <button class="btn danger" onclick="clearRepoToken()">清除</button>
+      </div>
+      <div id="repo-result" style="margin-top:10px;font-size:13px;color:var(--muted);"></div>
+    </div>
+
     <h2>匯入券商資料</h2>
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;" class="import-grid">
@@ -891,6 +909,7 @@ function parseTxCSV(lines, hdrs) {
     _TRADES = [...newTrades.reverse(), ..._TRADES];
     saveLocalData();
     syncToGist();
+    if (getRepoToken()) pushToGitHub();
     ulog(`➕ 新增 ${added} 筆交易`, 'lg');
     newTrades.forEach(t => ulog(`   ${t.date} ${t.stock} ${t.action==='BUY'?'買':'賣'} ${fmt(t.shares)}股 @${t.price}`));
     renderAll();
@@ -957,9 +976,119 @@ function parsePosCSV(lines, hdrs) {
   _POSITIONS = newPos;
   saveLocalData();
   syncToGist();
+  if (getRepoToken()) pushToGitHub();
   ulog(`✅ 持倉已更新（${newPos.length} 檔）`, 'lg');
   newPos.forEach(p => ulog(`   ${p.stock} ${p.shares}股 均價${p.avgCost} → ${sign(p.pnl)}${fmt(p.pnl)}（${sign(p.pct)}${fmtD(p.pct)}%）`, cls(p.pnl)==='up'?'lg':'lr'));
   renderAll();
+}
+
+// ─────────────────────────────────────────────
+// GitHub Repo — 寫回 data.js
+// ─────────────────────────────────────────────
+const REPO_TOKEN_KEY = 'repo_token';
+const REPO_OWNER = 'kodada55123';
+const REPO_NAME  = 'trading';
+const REPO_FILE  = 'data.js';
+
+function getRepoToken() { return localStorage.getItem(REPO_TOKEN_KEY) || ''; }
+
+function saveRepoToken() {
+  const token = document.getElementById('repo-token').value.trim();
+  const res   = document.getElementById('repo-result');
+  if (!token) { res.textContent = '❌ 請填入 Token'; res.style.color='var(--red)'; return; }
+  localStorage.setItem(REPO_TOKEN_KEY, token);
+  res.textContent = '✅ Token 已儲存'; res.style.color = 'var(--green)';
+}
+
+function clearRepoToken() {
+  localStorage.removeItem(REPO_TOKEN_KEY);
+  document.getElementById('repo-token').value = '';
+  const res = document.getElementById('repo-result');
+  res.textContent = '已清除'; res.style.color = 'var(--muted)';
+}
+
+function generateDataJS() {
+  const today = new Date().toISOString().slice(0, 10);
+  const q = v => JSON.stringify(v);
+
+  const posLines = _POSITIONS.map(p =>
+    `  { stock:${q(p.stock)}, code:${q(p.code)}, type:${q(p.type)}, shares:${p.shares}, avgCost:${p.avgCost}, price:${p.price}, value:${p.value}, pnl:${p.pnl}, pct:${p.pct} }`
+  ).join(',\n');
+
+  const realLines = _REALIZED.map(r =>
+    `  { stock:${q(r.stock)}, buyDate:${q(r.buyDate)}, sellDate:${q(r.sellDate)}, cost:${r.cost}, proceeds:${r.proceeds}, pnl:${r.pnl}, pct:${r.pct}, note:${q(r.note)} }`
+  ).join(',\n');
+
+  const tradeLines = _TRADES.map(t => {
+    let s = `  { date:${q(t.date)}, stock:${q(t.stock)}, action:${q(t.action)}, price:${t.price}, shares:${t.shares}, net:${t.net}, fee:${t.fee}, tax:${t.tax}, note:${q(t.note||'')}`;
+    if (t.oid) s += `, oid:${q(t.oid)}`;
+    return s + ' }';
+  }).join(',\n');
+
+  return `// ═══════════════════════════════════════════════════════════════
+// data.js  ──  自動更新，請勿手動編輯（最後更新：${today}）
+// ═══════════════════════════════════════════════════════════════
+const LAST_UPDATED = ${q(today)};
+
+// ── 未實現持倉 ────────────────────────────────────────────────
+const POSITIONS = [
+${posLines},
+];
+
+// ── 已實現損益 ────────────────────────────────────────────────
+const REALIZED = [
+${realLines},
+];
+
+// ── 交易明細 ──────────────────────────────────────────────────
+const TRADES = [
+${tradeLines},
+];
+`;
+}
+
+async function pushToGitHub() {
+  const token = getRepoToken();
+  const res   = document.getElementById('repo-result');
+  if (!token) {
+    ulog('❌ 請先在上方填入並儲存 GitHub Token', 'lr');
+    if (res) { res.textContent = '❌ 未設定 Token'; res.style.color='var(--red)'; }
+    return;
+  }
+
+  const apiBase = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${REPO_FILE}`;
+  const headers = { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' };
+
+  ulog('📤 取得 data.js 目前版本…');
+  if (res) { res.textContent = '同步中…'; res.style.color='var(--muted)'; }
+
+  const getResp = await fetch(apiBase, { headers }).catch(() => null);
+  if (!getResp || !getResp.ok) {
+    ulog(`❌ 無法讀取 data.js（${getResp?.status}）`, 'lr');
+    if (res) { res.textContent = '❌ 讀取失敗'; res.style.color='var(--red)'; }
+    return;
+  }
+  const { sha } = await getResp.json();
+
+  const content  = generateDataJS();
+  // UTF-8 → base64（支援中文）
+  const encoded  = btoa(encodeURIComponent(content).replace(/%([0-9A-F]{2})/g, (_, p) => String.fromCharCode('0x'+p)));
+  const today    = new Date().toISOString().slice(0, 10);
+
+  ulog('📤 正在 commit data.js…');
+  const putResp = await fetch(apiBase, {
+    method: 'PUT', headers,
+    body: JSON.stringify({ message: `data: 自動更新 ${today}`, content: encoded, sha })
+  }).catch(() => null);
+
+  if (putResp?.ok) {
+    ulog('✅ data.js 已更新至 GitHub！約 1 分鐘後全裝置生效', 'lg');
+    if (res) { res.textContent = `✅ 已同步 ${new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'})}`; res.style.color='var(--green)'; }
+  } else {
+    const err = await putResp?.json().catch(() => ({}));
+    ulog(`❌ commit 失敗：${err.message || putResp?.status}`, 'lr');
+    if (res) { res.textContent = '❌ 同步失敗'; res.style.color='var(--red)'; }
+  }
 }
 
 // ─────────────────────────────────────────────
@@ -1131,6 +1260,8 @@ window.addEventListener('DOMContentLoaded', () => {
   const { token, gistId } = getGistConfig();
   if (token) document.getElementById('gist-token').value = token;
   if (gistId) document.getElementById('gist-id').value  = gistId;
+  const rt = getRepoToken();
+  if (rt) document.getElementById('repo-token').value = rt;
 });
 
 // ─────────────────────────────────────────────
@@ -1138,17 +1269,26 @@ window.addEventListener('DOMContentLoaded', () => {
 // ─────────────────────────────────────────────
 (function autoSetup() {
   const hash = location.hash;
-  if (!hash.startsWith('#setup:')) return;
-  const rest  = hash.slice(7); // remove "#setup:"
-  const colon = rest.indexOf(':');
-  if (colon < 0) return;
-  const gistId = rest.slice(0, colon);
-  const token  = rest.slice(colon + 1);
-  if (gistId && token) {
-    localStorage.setItem(GIST_ID_KEY,    gistId);
-    localStorage.setItem(GIST_TOKEN_KEY, token);
-    history.replaceState(null, '', location.pathname); // remove hash from URL
-    console.log('✅ 同步設定已自動完成');
+  if (hash.startsWith('#setup:')) {
+    const rest  = hash.slice(7);
+    const colon = rest.indexOf(':');
+    if (colon >= 0) {
+      const gistId = rest.slice(0, colon);
+      const token  = rest.slice(colon + 1);
+      if (gistId && token) {
+        localStorage.setItem(GIST_ID_KEY,    gistId);
+        localStorage.setItem(GIST_TOKEN_KEY, token);
+        history.replaceState(null, '', location.pathname);
+        console.log('✅ Gist 同步設定已自動完成');
+      }
+    }
+  } else if (hash.startsWith('#reposetup:')) {
+    const token = hash.slice(11);
+    if (token) {
+      localStorage.setItem(REPO_TOKEN_KEY, token);
+      history.replaceState(null, '', location.pathname);
+      console.log('✅ Repo Token 已自動設定');
+    }
   }
 })();
 
