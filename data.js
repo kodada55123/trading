@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════
-// data.js  ──  自動更新，請勿手動編輯（最後更新：2026-07-02）
+// data.js  ──  自動更新，請勿手動編輯（最後更新：2026-07-03）
 // ═══════════════════════════════════════════════════════════════
-const LAST_UPDATED = "2026-07-02";
+const LAST_UPDATED = "2026-07-03";
 
 // ── 未實現持倉 ────────────────────────────────────────────────
 const POSITIONS = [
@@ -44,6 +44,10 @@ const REALIZED = [
 
 // ── 交易明細 ──────────────────────────────────────────────────
 const TRADES = [
+  { date:"2026-07-03", stock:"力智", action:"SELL", price:291, shares:300, net:87005, fee:34, tax:261, note:"", oid:"r0CVT" },
+  { date:"2026-07-03", stock:"力智", action:"SELL", price:291.5, shares:120, net:34863, fee:13, tax:104, note:"", oid:"r0CTp" },
+  { date:"2026-07-03", stock:"力智", action:"SELL", price:292, shares:80, net:23281, fee:9, tax:70, note:"", oid:"r0CSx" },
+  { date:"2026-07-03", stock:"世芯-KY", action:"BUY", price:4705, shares:30, net:-141206, fee:56, tax:0, note:"", oid:"r0BsR" },
   { date:"2026-07-02", stock:"群聯", action:"SELL", price:2215, shares:40, net:88300, fee:35, tax:265, note:"", oid:"r08ja" },
   { date:"2026-07-02", stock:"群聯", action:"SELL", price:2200, shares:40, net:87701, fee:35, tax:264, note:"", oid:"r07He" },
   { date:"2026-07-02", stock:"力智", action:"BUY", price:301, shares:80, net:-24089, fee:9, tax:0, note:"", oid:"r0E1z" },
