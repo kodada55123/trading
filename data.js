@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════
-// data.js  ──  自動更新，請勿手動編輯（最後更新：2026-07-05）
+// data.js  ──  自動更新，請勿手動編輯（最後更新：2026-07-06）
 // ═══════════════════════════════════════════════════════════════
-const LAST_UPDATED = "2026-07-05";
+const LAST_UPDATED = "2026-07-06";
 
 // ── 未實現持倉 ────────────────────────────────────────────────
 const POSITIONS = [
@@ -45,6 +45,20 @@ const REALIZED = [
 
 // ── 交易明細 ──────────────────────────────────────────────────
 const TRADES = [
+  { date:"2026-07-01", stock:"均豪", action:"BUY", price:122.5, shares:257, net:-31494, fee:12, tax:0, note:"", oid:"r0BsG" },
+  { date:"2026-07-01", stock:"均豪", action:"BUY", price:122.5, shares:300, net:-36764, fee:14, tax:0, note:"", oid:"r0BZK" },
+  { date:"2026-07-01", stock:"均豪", action:"BUY", price:123, shares:1000, net:-123049, fee:49, tax:0, note:"", oid:"ar568" },
+  { date:"2026-07-06", stock:"力智", action:"SELL", price:313, shares:80, net:24956, fee:9, tax:75, note:"", oid:"r0ACg" },
+  { date:"2026-07-06", stock:"世芯-KY", action:"SELL", price:4240, shares:30, net:126769, fee:50, tax:381, note:"", oid:"r0ESK" },
+  { date:"2026-07-06", stock:"世芯-KY", action:"BUY", price:4330, shares:10, net:-43317, fee:17, tax:0, note:"", oid:"r0AdI" },
+  { date:"2026-07-06", stock:"世芯-KY", action:"BUY", price:4340, shares:10, net:-43417, fee:17, tax:0, note:"", oid:"r09SG" },
+  { date:"2026-07-06", stock:"創意", action:"SELL", price:4630, shares:30, net:138429, fee:55, tax:416, note:"", oid:"r09jS" },
+  { date:"2026-07-06", stock:"創意", action:"SELL", price:4620, shares:20, net:92087, fee:36, tax:277, note:"", oid:"r09EK" },
+  { date:"2026-07-06", stock:"欣銓", action:"BUY", price:262, shares:200, net:-52420, fee:20, tax:0, note:"", oid:"r0AVA" },
+  { date:"2026-07-06", stock:"欣銓", action:"BUY", price:262, shares:100, net:-26210, fee:10, tax:0, note:"", oid:"r0AJD" },
+  { date:"2026-07-06", stock:"欣銓", action:"BUY", price:264, shares:100, net:-26410, fee:10, tax:0, note:"", oid:"r0AAP" },
+  { date:"2026-07-06", stock:"晶技", action:"BUY", price:226.5, shares:100, net:-22659, fee:9, tax:0, note:"", oid:"r0AzI" },
+  { date:"2026-07-06", stock:"晶技", action:"BUY", price:226.5, shares:200, net:-45318, fee:18, tax:0, note:"", oid:"r0Aty" },
   { date:"2026-07-03", stock:"力智", action:"SELL", price:291, shares:300, net:87005, fee:34, tax:261, note:"", oid:"r0CVT" },
   { date:"2026-07-03", stock:"力智", action:"SELL", price:291.5, shares:120, net:34863, fee:13, tax:104, note:"", oid:"r0CTp" },
   { date:"2026-07-03", stock:"力智", action:"SELL", price:292, shares:80, net:23281, fee:9, tax:70, note:"", oid:"r0CSx" },
