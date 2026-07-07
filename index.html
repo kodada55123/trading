@@ -326,6 +326,9 @@ tr:hover td{background:rgba(255,255,255,.03);}
   <!-- ═══════════ REALIZED ═══════════ -->
   <div id="section-realized" class="section">
     <h2>已實現損益摘要</h2>
+    <p style="color:var(--muted);font-size:12px;margin:-8px 0 14px;">
+      由交易明細自動配對計算（出清即自動列入，無需手動維護）。標示「含前期持股」者，期初成本未入帳，損益以賣出全額估計。
+    </p>
     <div class="tbl-wrap"><table id="tbl-realized"></table></div>
   </div>
 
@@ -510,6 +513,66 @@ function onNoteInput(el) { el.classList.toggle('has-note', el.value.trim().lengt
 function onNoteBlur(el)  { localStorage.setItem(el.dataset.key, el.value); }
 
 // ─────────────────────────────────────────────
+// 已實現損益 — 從交易明細自動配對計算
+// 每檔股票依日期累計買賣，股數歸零＝一段完整交易（出清）
+// ─────────────────────────────────────────────
+const CN_NUM = ['一','二','三','四','五','六','七','八','九','十'];
+
+function computeRealized() {
+  // 舊備註對照：股名（去段落標記）＋賣出日 → 備註，讓手寫的心得不會消失
+  const noteMap = {};
+  (typeof REALIZED !== 'undefined' ? REALIZED : []).forEach(r => {
+    if (!r.note || r.note === '含前期持股') return;
+    const base = r.stock.replace(/（.*?）/g, '');
+    noteMap[`${base}_${r.sellDate}`] = r.note;
+    if (!(base in noteMap)) noteMap[base] = r.note;
+  });
+
+  const byStock = {};
+  _TRADES.forEach(t => { (byStock[t.stock] = byStock[t.stock] || []).push(t); });
+  const out = [];
+
+  Object.entries(byStock).forEach(([stock, trades]) => {
+    // 同日先買後賣（處理當沖），日期由遠到近
+    const sorted = [...trades].sort((a,b) =>
+      a.date.localeCompare(b.date) || (a.action === b.action ? 0 : a.action === 'BUY' ? -1 : 1));
+
+    // 前期持股偵測：累計股數最低點 < 0 → 期初有帳外持股（成本未知，以 0 計）
+    let run = 0, minRun = 0;
+    sorted.forEach(t => { run += t.action === 'BUY' ? t.shares : -t.shares; minRun = Math.min(minRun, run); });
+    const preShares = -Math.min(0, minRun);
+
+    let shares = preShares, cost = 0, proceeds = 0, firstBuy = null;
+    let segHasPre = preShares > 0;
+    const segs = [];
+    sorted.forEach(t => {
+      if (t.action === 'BUY') { shares += t.shares; cost += -t.net; if (!firstBuy) firstBuy = t.date; }
+      else { shares -= t.shares; proceeds += t.net; }
+      if (shares === 0 && (cost > 0 || proceeds > 0)) {
+        const pnl = Math.round(proceeds - cost);
+        segs.push({ buyDate: firstBuy || '前期', sellDate: t.date,
+          cost: Math.round(cost), proceeds: Math.round(proceeds), pnl,
+          pct: cost > 0 ? +(pnl / cost * 100).toFixed(2) : 0, pre: segHasPre });
+        cost = 0; proceeds = 0; firstBuy = null; segHasPre = false;
+      }
+    });
+    // 迴圈結束仍有持股 → 未平倉段，不列入已實現
+
+    segs.forEach((s, i) => {
+      const label = segs.length > 1 ? `${stock}（第${CN_NUM[i] || i+1}段）` : stock;
+      const note = noteMap[`${stock}_${s.sellDate}`]
+        || (segs.length === 1 ? noteMap[stock] : '')
+        || (s.pre ? '含前期持股' : '');
+      out.push({ stock: label, buyDate: s.buyDate, sellDate: s.sellDate,
+        cost: s.cost, proceeds: s.proceeds, pnl: s.pnl, pct: s.pct, note });
+    });
+  });
+
+  out.sort((a,b) => b.sellDate.localeCompare(a.sellDate));
+  return out;
+}
+
+// ─────────────────────────────────────────────
 // Charts registry
 // ─────────────────────────────────────────────
 const _charts = {};
@@ -537,6 +600,7 @@ function showSection(id, btn) {
 // renderAll
 // ─────────────────────────────────────────────
 function renderAll() {
+  _REALIZED = computeRealized(); // 已實現永遠從交易明細重算
   // 顯示實際生效資料的日期（本機快照較新就顯示快照日期）
   const snapTs = localStorage.getItem(DATA_TS_KEY);
   document.getElementById("updated-date").textContent =
@@ -769,8 +833,8 @@ function renderJournal() {
     const codePos = pos?.code || _POSITIONS.find(p=>p.stock===g.stock)?.code;
     const codeStr = codePos && codePos !== '—' ? `<span style="font-size:11px;color:var(--muted);margin-left:6px;">${codePos}</span>` : '';
 
-    // For closed stocks: find realized return
-    const realEntries = _REALIZED.filter(r => r.stock === g.stock && r.pct);
+    // For closed stocks: find realized return（去掉（第X段）標記比對）
+    const realEntries = _REALIZED.filter(r => r.stock.replace(/（.*?）/g,'') === g.stock && r.pct);
     let closedTag = '';
     if (!isOpen && realEntries.length > 0) {
       const totalPnl  = realEntries.reduce((s,r) => s+r.pnl, 0);
