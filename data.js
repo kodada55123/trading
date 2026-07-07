@@ -5,16 +5,15 @@ const LAST_UPDATED = "2026-07-07";
 
 // ── 未實現持倉 ────────────────────────────────────────────────
 const POSITIONS = [
-  { stock:"元大台灣50", code:"0050", type:"ETF", shares:8000, avgCost:61.76, price:108.25, value:864802, pnl:370538, pct:74.97 },
-  { stock:"富邦台50", code:"006208", type:"ETF", shares:11000, avgCost:99.23, price:251.35, value:2760999, pnl:1669099, pct:152.86 },
-  { stock:"復華富時不動產", code:"00712", type:"ETF", shares:12000, avgCost:9.61, price:8.84, value:105941, pnl:-9464, pct:-8.2 },
-  { stock:"國泰永續高股息", code:"00878", type:"ETF", shares:31000, avgCost:22.01, price:33.49, value:1036758, pnl:354276, pct:51.91 },
-  { stock:"群益台灣精選高息", code:"00919", type:"ETF", shares:6000, avgCost:22.57, price:29.76, value:178316, pnl:42874, pct:31.65 },
-  { stock:"晶技", code:"—", type:"股票", shares:1000, avgCost:224.75, price:224.5, value:223741, pnl:-1098, pct:-0.49 },
-  { stock:"欣銓", code:"—", type:"股票", shares:600, avgCost:262.33, price:257, value:153678, pnl:-3782, pct:-2.4 },
-  { stock:"世芯-KY", code:"—", type:"股票", shares:20, avgCost:4335, price:4215, value:84016, pnl:-2718, pct:-3.13 },
-  { stock:"均豪", code:"—", type:"股票", shares:2000, avgCost:122.24, price:118.5, value:236197, pnl:-8382, pct:-3.43 },
-  { stock:"聯策", code:"6299", type:"股票", shares:1260, avgCost:211.11, price:205.5, value:258054, pnl:-8047, pct:-3.02 },
+  { stock:"元大台灣50", code:"0050", type:"ETF", shares:8000, avgCost:61.76, price:106.2, value:848424, pnl:354160, pct:71.65 },
+  { stock:"富邦台50", code:"006208", type:"ETF", shares:11000, avgCost:99.23, price:246.5, value:2707779, pnl:1615879, pct:147.99 },
+  { stock:"復華富時不動產", code:"00712", type:"ETF", shares:12000, avgCost:9.61, price:8.87, value:106301, pnl:-9104, pct:-7.89 },
+  { stock:"國泰永續高股息", code:"00878", type:"ETF", shares:31000, avgCost:22.01, price:32.97, value:1020663, pnl:338181, pct:49.55 },
+  { stock:"群益台灣精選高息", code:"00919", type:"ETF", shares:6000, avgCost:22.57, price:29.62, value:177476, pnl:42034, pct:31.03 },
+  { stock:"晶技", code:"—", type:"股票", shares:1400, avgCost:220.43, price:210, value:293006, pnl:-15715, pct:-5.09 },
+  { stock:"欣銓", code:"—", type:"股票", shares:400, avgCost:262, price:231.5, value:92288, pnl:-12552, pct:-11.97 },
+  { stock:"均豪", code:"—", type:"股票", shares:2000, avgCost:122.24, price:109.5, value:218261, pnl:-26318, pct:-10.76 },
+  { stock:"聯策", code:"6299", type:"股票", shares:1400, avgCost:209.55, price:194.5, value:271380, pnl:-22101, pct:-7.53 },
 ];
 
 // ── 已實現損益 ────────────────────────────────────────────────
