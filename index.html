@@ -171,6 +171,18 @@ tr:hover td{background:rgba(255,255,255,.03);}
 /* Mobile nav hidden by default, shown via mobile media query */
 .mobile-nav{display:none;}
 
+/* Discipline rules */
+.rule-card{display:flex;gap:14px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:12px;}
+.rule-num{flex-shrink:0;width:32px;height:32px;border-radius:50%;background:rgba(240,168,50,.15);color:var(--gold);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:15px;}
+.rule-title{font-weight:600;font-size:14px;margin-bottom:6px;}
+.rule-why{font-size:12px;color:var(--muted);line-height:1.7;}
+.rule-summary{background:rgba(240,168,50,.08);border:1px solid rgba(240,168,50,.3);border-radius:10px;padding:14px 16px;font-size:13px;line-height:1.8;margin-top:16px;}
+/* Dashboard discipline alerts */
+.d-alert{display:flex;gap:10px;align-items:flex-start;border-radius:10px;padding:12px 14px;margin-bottom:10px;font-size:13px;line-height:1.6;}
+.d-alert.warn{background:rgba(248,81,73,.08);border:1px solid rgba(248,81,73,.35);}
+.d-alert.ok{background:rgba(63,185,80,.06);border:1px solid rgba(63,185,80,.25);color:var(--muted);}
+.d-alert .d-icon{flex-shrink:0;}
+
 /* ═══════════════════════════════
    Responsive — Tablet (≤900px)
 ═══════════════════════════════ */
@@ -281,6 +293,7 @@ tr:hover td{background:rgba(255,255,255,.03);}
         <button onclick="showSection('realized',this)">已實現</button>
         <button onclick="showSection('trades',this)">交易明細</button>
         <button onclick="showSection('journal',this)">交易筆記</button>
+        <button onclick="showSection('discipline',this)">交易紀律</button>
         <button class="accent" onclick="showSection('upload',this)">⬆ 資料更新</button>
       </div>
       <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
@@ -298,6 +311,7 @@ tr:hover td{background:rgba(255,255,255,.03);}
 
   <!-- ═══════════ DASHBOARD ═══════════ -->
   <div id="section-dashboard" class="section active">
+    <div id="discipline-alerts"></div>
     <div class="cards" id="summary-cards"></div>
     <div class="charts">
       <div class="chart-box" style="grid-column:1/-1;">
@@ -330,6 +344,67 @@ tr:hover td{background:rgba(255,255,255,.03);}
       由交易明細自動配對計算（出清即自動列入，無需手動維護）。標示「含前期持股」者，期初成本未入帳，損益以賣出全額估計。
     </p>
     <div class="tbl-wrap"><table id="tbl-realized"></table></div>
+  </div>
+
+  <!-- ═══════════ DISCIPLINE ═══════════ -->
+  <div id="section-discipline" class="section">
+    <h2>交易紀律</h2>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:16px;">
+      依 2026 年 1–5 月（獲利期）與 6–7 月（虧損期）的實際交易數據推導。總覽頁會自動偵測違規並警示。
+    </p>
+
+    <div class="rule-card">
+      <div class="rule-num">1</div>
+      <div>
+        <div class="rule-title">停損後 10 個交易日內，禁止回補同一檔</div>
+        <div class="rule-why">若回補，價格必須低於你的停損價。<br>
+        <span class="rule-evidence">證據：力智 6/29 停損 @258 → 7/2 追高回補 @301–312 → 再停損。兩段合計 -41,362。創意 7/2 用比 5 月賣價更高的 @5300 追回，-34,689。</span></div>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-num">2</div>
+      <div>
+        <div class="rule-title">禁止向下攤平 — 只加碼已獲利的部位</div>
+        <div class="rule-why"><span class="rule-evidence">證據：7 月三次攤平全數失敗 — 世芯-KY -19,748、均豪帳面 -26,318、晶技帳面 -15,715。沒有一次救回來。</span></div>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-num">3</div>
+      <div>
+        <div class="rule-title">單檔部位上限 15 萬，直到單月重新獲利</div>
+        <div class="rule-why"><span class="rule-evidence">證據：6 月平均部位 22.8 萬（1 月僅 9.2 萬），勝率反而從 63% 掉到 43%。錯的次數變多，單次下注卻更大。</span></div>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-num">4</div>
+      <div>
+        <div class="rule-title">新開倉每週最多 2 檔</div>
+        <div class="rule-why"><span class="rule-evidence">證據：6 月成交 92 筆（1 月的 3.7 倍）。7 月初同時持有晶技＋欣銓＋均豪＋世芯＋力智＋創意，全是同板塊，等於一次重壓。</span></div>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-num">5</div>
+      <div>
+        <div class="rule-title">進場前先寫交易筆記：理由、停損價、預計持有時間</div>
+        <div class="rule-why"><span class="rule-evidence">證據：欣銓 7/6 買 @262，隔天恐慌砍 @232（一天 -11.5%）— 進場時沒有預設停損位，跌了才臨場決定。</span></div>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-num">6</div>
+      <div>
+        <div class="rule-title">持有 7 天以上才是你的獲利模式</div>
+        <div class="rule-why"><span class="rule-evidence">證據：6–7 月快進快出（≤7 天）11 段：2 勝 9 敗，-123,034。波段（≥8 天）10 段：7 勝 3 敗，+171,078。你的大獲利全來自數週持有：聯發科 55 天 +141%、富鼎 14 天 +44%。</span></div>
+      </div>
+    </div>
+
+    <div class="rule-summary">
+      <strong>一句話：</strong>你不是選股變差，是把「賠小賺大」做成了「賠大賺小」。平均獲利幾乎沒變（31,520 → 24,787），平均虧損卻從 -4,109 膨脹到 -14,587。問題在出場紀律與回補衝動，不在進場眼光。
+    </div>
   </div>
 
   <!-- ═══════════ TRADES ═══════════ -->
@@ -468,6 +543,9 @@ tr:hover td{background:rgba(255,255,255,.03);}
   </button>
   <button onclick="showSection('journal',this)">
     <span class="mn-icon">📝</span>筆記
+  </button>
+  <button onclick="showSection('discipline',this)">
+    <span class="mn-icon">🎯</span>紀律
   </button>
   <button onclick="showSection('upload',this)">
     <span class="mn-icon">⬆</span>更新
@@ -686,7 +764,75 @@ function renderAll() {
 
   fillMonthOptions();
   renderTrades();
+  renderDiscipline();
   renderCharts(totalUnrealized, totalRealizedPnl, totalPnl, posSort, totalValue);
+}
+
+// ─────────────────────────────────────────────
+// 交易紀律自動偵測 — 總覽頁警示
+// ─────────────────────────────────────────────
+const POSITION_LIMIT = 150000;   // 規則3：單檔部位上限
+const COOLDOWN_DAYS  = 14;       // 規則1：停損冷靜期（約 10 個交易日）
+const WEEKLY_NEW_MAX = 2;        // 規則4：每週新開倉上限
+
+function daysBetween(a, b) { return Math.round((new Date(b) - new Date(a)) / 86400000); }
+
+function renderDiscipline() {
+  const box = document.getElementById('discipline-alerts');
+  if (!box) return;
+  const today = LAST_UPDATED;
+  const etf = new Set(_POSITIONS.filter(p => p.type === 'ETF').map(p => p.stock));
+  const alerts = [];
+
+  // 規則1：停損後 14 天內回補（只看最近 30 天內的回補）
+  _REALIZED.filter(r => r.pnl < 0).forEach(r => {
+    const base = r.stock.replace(/（.*?）/g, '');
+    const rebuy = _TRADES.find(t =>
+      t.stock === base && t.action === 'BUY' &&
+      t.date > r.sellDate && daysBetween(r.sellDate, t.date) <= COOLDOWN_DAYS);
+    if (rebuy && daysBetween(rebuy.date, today) <= 30) {
+      alerts.push(`<strong>${base}</strong>：${r.sellDate} 停損（${sign(r.pnl)}${fmt(r.pnl)}）後，${rebuy.date} 就回補 @${rebuy.price} — 違反冷靜期（規則 1）`);
+    }
+  });
+
+  // 規則2：向下攤平 — 虧損中的持股，且最近的買進價低於首次買進價
+  _POSITIONS.filter(p => !etf.has(p.stock) && p.pnl < 0).forEach(p => {
+    const buys = _TRADES.filter(t => t.stock === p.stock && t.action === 'BUY' && daysBetween(t.date, today) <= 45)
+      .sort((a,b) => a.date.localeCompare(b.date));
+    if (buys.length >= 2 && buys[buys.length-1].price < buys[0].price && buys[buys.length-1].date !== buys[0].date) {
+      alerts.push(`<strong>${p.stock}</strong>：虧損中（${sign(p.pct)}${fmtD(p.pct)}%）仍向下攤平（首買 @${buys[0].price} → 最近 @${buys[buys.length-1].price}）— 違反規則 2`);
+    }
+  });
+
+  // 規則3：單檔部位超標
+  _POSITIONS.filter(p => !etf.has(p.stock) && p.value > POSITION_LIMIT).forEach(p => {
+    alerts.push(`<strong>${p.stock}</strong>：部位 ${fmt(p.value)} 超過 ${fmt(POSITION_LIMIT)} 上限（規則 3）`);
+  });
+
+  // 規則4：近 7 天新開倉檔數
+  const weekBuys = [...new Set(_TRADES
+    .filter(t => t.action === 'BUY' && !etf.has(t.stock) && daysBetween(t.date, today) <= 7)
+    .map(t => t.stock))];
+  const newOpens = weekBuys.filter(st => {
+    const first = _TRADES.filter(t => t.stock === st && t.action === 'BUY').sort((a,b) => a.date.localeCompare(b.date))[0];
+    return first && daysBetween(first.date, today) <= 7;
+  });
+  if (newOpens.length > WEEKLY_NEW_MAX) {
+    alerts.push(`本週新開倉 <strong>${newOpens.length} 檔</strong>（${newOpens.join('、')}）超過每週 ${WEEKLY_NEW_MAX} 檔上限（規則 4）`);
+  }
+
+  // 規則6：本月快進快出戰績
+  const thisMonth = today.slice(0, 7);
+  const quick = _REALIZED.filter(r =>
+    r.sellDate.startsWith(thisMonth) && r.buyDate !== '前期' && daysBetween(r.buyDate, r.sellDate) <= 7);
+  if (quick.length >= 3) {
+    const qPnl = quick.reduce((s,r) => s + r.pnl, 0);
+    if (qPnl < 0) alerts.push(`本月快進快出（≤7 天）已 ${quick.length} 段，合計 <strong>${sign(qPnl)}${fmt(qPnl)}</strong> — 你的獲利模式是 7 天以上波段（規則 6）`);
+  }
+
+  box.innerHTML = alerts.length
+    ? alerts.map(a => `<div class="d-alert warn"><span class="d-icon">⚠️</span><span>${a}</span></div>`).join('')
+    : `<div class="d-alert ok"><span class="d-icon">✅</span><span>目前無紀律違規 — 六條規則詳見「交易紀律」頁</span></div>`;
 }
 
 // 月份篩選選單：由今年實際有交易的月份動態產生
