@@ -2,7 +2,7 @@
 // data.js  ──  自動更新，請勿手動編輯（最後更新：2026-07-07）
 // ═══════════════════════════════════════════════════════════════
 const LAST_UPDATED = "2026-07-07";
-const DATA_TS = "2026-07-07T12:00:00.000Z"; // 資料時間戳，用於新舊判斷
+const DATA_TS = "2026-07-07T06:40:37.048Z"; // 資料時間戳，用於新舊判斷
 
 // ── 未實現持倉 ────────────────────────────────────────────────
 const POSITIONS = [
@@ -44,6 +44,8 @@ const REALIZED = [
 
 // ── 交易明細 ──────────────────────────────────────────────────
 const TRADES = [
+  { date:"2026-07-06", stock:"欣銓", action:"BUY", price:262, shares:100, net:-26210, fee:10, tax:0, note:"", oid:"r0AiA" },
+  { date:"2026-07-07", stock:"欣銓", action:"SELL", price:232, shares:100, net:23122, fee:9, tax:69, note:"", oid:"r0DQJ" },
   { date:"2026-07-06", stock:"欣銓", action:"BUY", price:262, shares:100, net:-26210, fee:10, tax:0, note:"", oid:"r0ARR" },
   { date:"2026-07-07", stock:"聯策", action:"BUY", price:195.5, shares:140, net:-27380, fee:10, tax:0, note:"", oid:"r0FrQ" },
   { date:"2026-07-07", stock:"世芯-KY", action:"SELL", price:4085, shares:20, net:81423, fee:32, tax:245, note:"", oid:"r0Cx9" },
