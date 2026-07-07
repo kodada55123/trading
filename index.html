@@ -537,7 +537,10 @@ function showSection(id, btn) {
 // renderAll
 // ─────────────────────────────────────────────
 function renderAll() {
-  document.getElementById("updated-date").textContent = LAST_UPDATED;
+  // 顯示實際生效資料的日期（本機快照較新就顯示快照日期）
+  const snapTs = localStorage.getItem(DATA_TS_KEY);
+  document.getElementById("updated-date").textContent =
+    snapshotIsNewer(snapTs) ? snapTs.slice(0, 10) : LAST_UPDATED;
 
   const totalUnrealized  = _POSITIONS.reduce((s,p) => s + p.pnl, 0);
   const totalValue       = _POSITIONS.reduce((s,p) => s + p.value, 0);
@@ -907,9 +910,7 @@ function parseTxCSV(lines, hdrs) {
 
   if (added > 0) {
     _TRADES = [...newTrades.reverse(), ..._TRADES];
-    saveLocalData();
-    syncToGist();
-    if (getRepoToken()) pushToGitHub();
+    persistAll();
     ulog(`➕ 新增 ${added} 筆交易`, 'lg');
     newTrades.forEach(t => ulog(`   ${t.date} ${t.stock} ${t.action==='BUY'?'買':'賣'} ${fmt(t.shares)}股 @${t.price}`));
     renderAll();
@@ -974,9 +975,7 @@ function parsePosCSV(lines, hdrs) {
     return;
   }
   _POSITIONS = newPos;
-  saveLocalData();
-  syncToGist();
-  if (getRepoToken()) pushToGitHub();
+  persistAll();
   ulog(`✅ 持倉已更新（${newPos.length} 檔）`, 'lg');
   newPos.forEach(p => ulog(`   ${p.stock} ${p.shares}股 均價${p.avgCost} → ${sign(p.pnl)}${fmt(p.pnl)}（${sign(p.pct)}${fmtD(p.pct)}%）`, cls(p.pnl)==='up'?'lg':'lr'));
   renderAll();
@@ -1008,7 +1007,7 @@ function clearRepoToken() {
 }
 
 function generateDataJS() {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = new Date().toLocaleDateString('sv'); // 本地時區 YYYY-MM-DD
   const q = v => JSON.stringify(v);
 
   const posLines = _POSITIONS.map(p =>
@@ -1029,6 +1028,7 @@ function generateDataJS() {
 // data.js  ──  自動更新，請勿手動編輯（最後更新：${today}）
 // ═══════════════════════════════════════════════════════════════
 const LAST_UPDATED = ${q(today)};
+const DATA_TS = ${q(new Date().toISOString())}; // 資料時間戳，用於新舊判斷
 
 // ── 未實現持倉 ────────────────────────────────────────────────
 const POSITIONS = [
@@ -1073,7 +1073,7 @@ async function pushToGitHub() {
   const content  = generateDataJS();
   // UTF-8 → base64（支援中文）
   const encoded  = btoa(encodeURIComponent(content).replace(/%([0-9A-F]{2})/g, (_, p) => String.fromCharCode('0x'+p)));
-  const today    = new Date().toISOString().slice(0, 10);
+  const today    = new Date().toLocaleDateString('sv');
 
   ulog('📤 正在 commit data.js…');
   const putResp = await fetch(apiBase, {
@@ -1097,32 +1097,46 @@ async function pushToGitHub() {
 const GIST_TOKEN_KEY = 'gist_token';
 const GIST_ID_KEY    = 'gist_id';
 const NOTE_PREFIXES  = ['note_', 'journal_'];
-const DATA_KEYS      = ['trades_data', 'positions_data'];
+const DATA_TS_KEY    = 'data_saved_at';
+const DATA_KEYS      = ['trades_data', 'positions_data', DATA_TS_KEY];
 
 function isNoteKey(k) { return NOTE_PREFIXES.some(p => k.startsWith(p)) || DATA_KEYS.includes(k); }
+
+// data.js 內建的資料時間戳（舊版 data.js 沒有 DATA_TS 就用 LAST_UPDATED 當日 0 點）
+function dataJsTs() { return (typeof DATA_TS !== 'undefined') ? DATA_TS : LAST_UPDATED + 'T00:00:00.000Z'; }
+// 快照比 data.js 新才採用（ISO 字串可直接比大小）
+function snapshotIsNewer(ts) { return !!ts && ts > dataJsTs(); }
 
 // 儲存匯入資料到 localStorage（頁面重整後也能保留）
 function saveLocalData() {
   try {
     localStorage.setItem('trades_data',    JSON.stringify(_TRADES));
     localStorage.setItem('positions_data', JSON.stringify(_POSITIONS));
+    localStorage.setItem(DATA_TS_KEY,      new Date().toISOString());
   } catch(e) { console.warn('saveLocalData failed', e); }
 }
 
-// 啟動時從 localStorage 還原匯入資料
+// 啟動時從 localStorage 還原匯入資料 — 只在快照比 data.js 新的時候
 function loadLocalData() {
-  try {
-    const td = localStorage.getItem('trades_data');
-    if (td) {
-      const parsed = JSON.parse(td);
-      // 只有 localStorage 的交易數 >= data.js 才採用（避免用舊快照蓋掉新 data.js）
-      if (parsed.length >= _TRADES.length) _TRADES = parsed;
-    }
-  } catch(e) {}
-  try {
-    const pd = localStorage.getItem('positions_data');
-    if (pd) _POSITIONS = JSON.parse(pd);
-  } catch(e) {}
+  const ts = localStorage.getItem(DATA_TS_KEY);
+  if (!snapshotIsNewer(ts)) {
+    // data.js 較新（或快照無時間戳）→ 清掉舊快照，避免舊資料蓋掉新資料
+    DATA_KEYS.forEach(k => localStorage.removeItem(k));
+    return;
+  }
+  try { const td = localStorage.getItem('trades_data');    if (td) _TRADES    = JSON.parse(td); } catch(e) {}
+  try { const pd = localStorage.getItem('positions_data'); if (pd) _POSITIONS = JSON.parse(pd); } catch(e) {}
+}
+
+// 匯入後統一儲存：本機 → Gist → GitHub repo，依序執行並回報結果
+async function persistAll() {
+  saveLocalData();
+  await syncToGist();
+  if (getRepoToken()) {
+    await pushToGitHub();
+  } else {
+    ulog('ℹ 未設定 Repo Token，資料只存在本機與 Gist（不會寫回 data.js）', 'lw');
+  }
 }
 
 function setSyncStatus(state, text) {
@@ -1177,10 +1191,19 @@ async function loadFromGist() {
   if (content) {
     try {
       const remote = JSON.parse(content);
-      Object.entries(remote).forEach(([k,v]) => { if (isNoteKey(k)) localStorage.setItem(k, v); });
-      // 還原交易與持倉資料
-      if (remote.trades_data)    { try { const t=JSON.parse(remote.trades_data);    if(t.length>=_TRADES.length)    _TRADES=t;    } catch{} }
-      if (remote.positions_data) { try { _POSITIONS=JSON.parse(remote.positions_data); } catch{} }
+      // 交易/持倉快照：只在 Gist 的比「本機」與「data.js」都新的時候才採用
+      const localTs  = localStorage.getItem(DATA_TS_KEY);
+      const remoteTs = remote[DATA_TS_KEY];
+      const useRemoteData = snapshotIsNewer(remoteTs) && (!localTs || remoteTs > localTs);
+      Object.entries(remote).forEach(([k,v]) => {
+        if (!isNoteKey(k)) return;
+        if (DATA_KEYS.includes(k)) { if (useRemoteData) localStorage.setItem(k, v); return; }
+        localStorage.setItem(k, v); // 筆記類直接合併
+      });
+      if (useRemoteData) {
+        try { if (remote.trades_data)    _TRADES    = JSON.parse(remote.trades_data);    } catch{}
+        try { if (remote.positions_data) _POSITIONS = JSON.parse(remote.positions_data); } catch{}
+      }
     } catch {}
   }
   const ts = new Date().toLocaleTimeString('zh-TW', {hour:'2-digit', minute:'2-digit'});
