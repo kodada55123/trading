@@ -333,13 +333,13 @@ tr:hover td{background:rgba(255,255,255,.03);}
   <div id="section-trades" class="section">
     <h2>交易明細</h2>
     <div class="filters">
-      <input type="text" id="filter-stock" placeholder="搜尋股票名稱…" oninput="renderTrades()">
-      <select id="filter-action" onchange="renderTrades()">
+      <input type="text" id="filter-stock" placeholder="搜尋股票名稱…" oninput="onFilterInput()">
+      <select id="filter-action" onchange="_tradesLimit=100;renderTrades()">
         <option value="">全部方向</option>
         <option value="BUY">買進</option>
         <option value="SELL">賣出</option>
       </select>
-      <select id="filter-month" onchange="renderTrades()">
+      <select id="filter-month" onchange="_tradesLimit=100;renderTrades()">
         <option value="">全部月份</option>
         <option value="2026-06">2026-06</option>
         <option value="2026-05">2026-05</option>
@@ -625,15 +625,30 @@ function renderAll() {
 // ─────────────────────────────────────────────
 // Trades table
 // ─────────────────────────────────────────────
+let _tradesLimit = 100; // 手機效能：預設只渲染前 100 筆
+function showMoreTrades() { _tradesLimit += 200; renderTrades(); }
+
+// 搜尋防抖：打字停頓 200ms 才重新渲染，避免每個字都重畫整張表
+let _filterTimer = null;
+function onFilterInput() {
+  clearTimeout(_filterTimer);
+  _filterTimer = setTimeout(() => { _tradesLimit = 100; renderTrades(); }, 200);
+}
+
 function renderTrades() {
   const q = document.getElementById("filter-stock")?.value.toLowerCase() || '';
   const a = document.getElementById("filter-action")?.value || '';
   const m = document.getElementById("filter-month")?.value || '';
-  const filtered = [..._TRADES]
+  const all = [..._TRADES]
     .filter(t => !q || t.stock.toLowerCase().includes(q))
     .filter(t => !a || t.action === a)
     .filter(t => !m || t.date.startsWith(m))
     .sort((a,b) => b.date.localeCompare(a.date));
+  const filtered = all.slice(0, _tradesLimit);
+  const moreBtn = all.length > _tradesLimit
+    ? `<tr><td colspan="9" style="text-align:center;padding:12px;">
+        <button class="btn" onclick="showMoreTrades()">顯示更多（還有 ${fmt(all.length - _tradesLimit)} 筆）</button>
+      </td></tr>` : '';
   const thead = `<thead><tr>
     <th>日期</th><th>股票</th><th>方向</th><th>價格</th><th>股數</th>
     <th>金額</th><th>手續費</th><th>交易稅</th>
@@ -655,13 +670,14 @@ function renderTrades() {
           data-key="${esc(key)}" value="${esc(note)}" placeholder="備註…"
           oninput="onNoteInput(this)" onblur="onNoteBlur(this)"></td>
       </tr>`;
-    }).join("") + "</tbody>";
+    }).join("") + moreBtn + "</tbody>";
 }
 
 // ─────────────────────────────────────────────
 // Charts
 // ─────────────────────────────────────────────
 const CDARK = { color:"#8b949e", gridColor:"rgba(255,255,255,.06)" };
+Chart.defaults.animation = false; // 手機效能：關閉圖表動畫，切換頁面更順
 
 function renderCharts(uPnl, rPnl, tPnl, posSort, totalValue) {
   mkChart("chart-pnl",{type:"bar",
@@ -878,7 +894,8 @@ function processCSV(text) {
 function parseTxCSV(lines, hdrs) {
   const idx = {};
   hdrs.forEach((h,i) => idx[h] = i);
-  const existOids = new Set(_TRADES.filter(t=>t.oid).map(t=>t.oid));
+  // 同一委託書號可能分批成交（不同價格/股數），去重鍵要含價格與股數
+  const existOids = new Set(_TRADES.filter(t=>t.oid).map(t=>`${t.oid}_${t.price}_${t.shares}`));
   const existComp = new Set(_TRADES.filter(t=>!t.oid).map(t=>`${t.date}_${t.stock}_${t.net}`));
   let added=0, skipped=0;
   const newTrades=[];
@@ -889,22 +906,24 @@ function parseTxCSV(lines, hdrs) {
     const stock = (row[idx['股名']]||'').trim();
     const oid   = (row[idx['委託書號']]||'').trim();
     if (!stock || stock.startsWith('總') || !oid) continue;
-    if (existOids.has(oid)) { skipped++; continue; }
-    const net  = toNum(row[idx['淨收付']]);
+    const net    = toNum(row[idx['淨收付']]);
+    const price  = toNum(row[idx['成交單價']]);
+    const shares = Math.abs(toNum(row[idx['成交股數']]));
+    const oidKey = `${oid}_${price}_${shares}`;
+    if (existOids.has(oidKey)) { skipped++; continue; }
     const comp = `${toDate(row[idx['日期']])}_${stock}_${net}`;
     if (existComp.has(comp)) { skipped++; continue; }
     const t = {
       date:   toDate(row[idx['日期']]),
       stock,
       action: net >= 0 ? 'SELL' : 'BUY',
-      price:  toNum(row[idx['成交單價']]),
-      shares: Math.abs(toNum(row[idx['成交股數']])),
+      price, shares,
       net, fee: toNum(row[idx['手續費']]), tax: toNum(row[idx['交易稅']]),
       oid, note: (row[idx['備註']]||'').trim(),
     };
     newTrades.push(t);
-    existOids.add(oid);
-    existComp.add(comp);
+    existOids.add(oidKey);
+    // 注意：不把 comp 加入集合 — 同日同股同金額的不同委託（如兩筆相同成交）是合法的，靠 oidKey 區分
     added++;
   }
 
