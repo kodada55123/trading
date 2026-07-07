@@ -528,8 +528,11 @@ function computeRealized() {
     if (!(base in noteMap)) noteMap[base] = r.note;
   });
 
+  // 持有中的 ETF 不列入：長期持有的部分賣出／股票分割（如 0050 一拆四）會產生假段落
+  const etfOpen = new Set(_POSITIONS.filter(p => p.type === 'ETF').map(p => p.stock));
+
   const byStock = {};
-  _TRADES.forEach(t => { (byStock[t.stock] = byStock[t.stock] || []).push(t); });
+  _TRADES.forEach(t => { if (!etfOpen.has(t.stock)) (byStock[t.stock] = byStock[t.stock] || []).push(t); });
   const out = [];
 
   Object.entries(byStock).forEach(([stock, trades]) => {
