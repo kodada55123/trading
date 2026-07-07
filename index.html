@@ -344,12 +344,6 @@ tr:hover td{background:rgba(255,255,255,.03);}
       </select>
       <select id="filter-month" onchange="_tradesLimit=100;renderTrades()">
         <option value="">全部月份</option>
-        <option value="2026-06">2026-06</option>
-        <option value="2026-05">2026-05</option>
-        <option value="2026-04">2026-04</option>
-        <option value="2026-03">2026-03</option>
-        <option value="2026-02">2026-02</option>
-        <option value="2026-01">2026-01</option>
       </select>
     </div>
     <div class="tbl-wrap"><table id="tbl-trades"></table></div>
@@ -497,6 +491,10 @@ let _TRADES    = [...TRADES];
 let _POSITIONS = [...POSITIONS];
 let _REALIZED  = [...REALIZED];
 
+// 顯示範圍：只列今年的交易；歷史年度資料保留在 _TRADES 供成本計算
+const THIS_YEAR = (typeof LAST_UPDATED !== 'undefined' ? LAST_UPDATED : new Date().toLocaleDateString('sv')).slice(0, 4);
+function yearTrades() { return _TRADES.filter(t => t.date.startsWith(THIS_YEAR)); }
+
 // ─────────────────────────────────────────────
 // Note helpers (trades table)
 // ─────────────────────────────────────────────
@@ -572,7 +570,8 @@ function computeRealized() {
   });
 
   out.sort((a,b) => b.sellDate.localeCompare(a.sellDate));
-  return out;
+  // 只列今年出清的段落（成本仍由歷史交易計算，跨年持股正確沖銷）
+  return out.filter(r => r.sellDate.startsWith(THIS_YEAR));
 }
 
 // ─────────────────────────────────────────────
@@ -628,8 +627,8 @@ function renderAll() {
                                sub:"實現＋未實現",                                color:cls(totalPnl) },
     { label:"勝率",            val:winRate+"%",
                                sub:winCount+" 勝 / "+_REALIZED.length+" 筆",     color:winRate>=50?"up":"dn" },
-    { label:"交易標的數",      val:[...new Set(_TRADES.map(t=>t.stock))].length+" 檔",
-                               sub:"本期累計",                                    color:"neu" },
+    { label:"交易標的數",      val:[...new Set(yearTrades().map(t=>t.stock))].length+" 檔",
+                               sub:THIS_YEAR+" 年累計",                           color:"neu" },
   ];
   document.getElementById("summary-cards").innerHTML = cards.map(c=>`
     <div class="card">
@@ -685,8 +684,19 @@ function renderAll() {
       <td colspan="2"></td>
     </tr>` + "</tbody>";
 
+  fillMonthOptions();
   renderTrades();
   renderCharts(totalUnrealized, totalRealizedPnl, totalPnl, posSort, totalValue);
+}
+
+// 月份篩選選單：由今年實際有交易的月份動態產生
+function fillMonthOptions() {
+  const sel = document.getElementById('filter-month');
+  if (!sel) return;
+  const cur = sel.value;
+  const months = [...new Set(yearTrades().map(t => t.date.slice(0,7)))].sort().reverse();
+  sel.innerHTML = '<option value="">全部月份</option>' +
+    months.map(m => `<option value="${m}"${m===cur?' selected':''}>${m}</option>`).join('');
 }
 
 // ─────────────────────────────────────────────
@@ -706,7 +716,7 @@ function renderTrades() {
   const q = document.getElementById("filter-stock")?.value.toLowerCase() || '';
   const a = document.getElementById("filter-action")?.value || '';
   const m = document.getElementById("filter-month")?.value || '';
-  const all = [..._TRADES]
+  const all = yearTrades()
     .filter(t => !q || t.stock.toLowerCase().includes(q))
     .filter(t => !a || t.action === a)
     .filter(t => !m || t.date.startsWith(m))
@@ -768,7 +778,7 @@ function renderCharts(uPnl, rPnl, tPnl, posSort, totalValue) {
   });
 
   const mm={};
-  _TRADES.forEach(t=>{ const m=t.date.slice(0,7); mm[m]=(mm[m]||0)+1; });
+  yearTrades().forEach(t=>{ const m=t.date.slice(0,7); mm[m]=(mm[m]||0)+1; });
   const months=Object.keys(mm).sort();
   mkChart("chart-monthly",{type:"bar",
     data:{labels:months,datasets:[{label:"交易筆數",data:months.map(m=>mm[m]),
@@ -788,9 +798,9 @@ function renderJournal() {
   // ETF stocks to exclude from journal
   const etfStocks = new Set(_POSITIONS.filter(p => p.type === 'ETF').map(p => p.stock));
 
-  // Group all trades by stock name (skip ETFs)
+  // Group all trades by stock name (skip ETFs)，只列今年
   const groups = {};
-  _TRADES.forEach(t => {
+  yearTrades().forEach(t => {
     if (etfStocks.has(t.stock)) return;
     if (q && !t.stock.toLowerCase().includes(q)) return;
     if (!groups[t.stock]) groups[t.stock] = { stock:t.stock, trades:[] };
