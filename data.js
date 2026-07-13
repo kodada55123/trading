@@ -1,8 +1,8 @@
 // ═══════════════════════════════════════════════════════════════
-// data.js  ──  自動更新，請勿手動編輯（最後更新：2026-07-09）
+// data.js  ──  自動更新，請勿手動編輯（最後更新：2026-07-13）
 // ═══════════════════════════════════════════════════════════════
-const LAST_UPDATED = "2026-07-09";
-const DATA_TS = "2026-07-09T06:13:16.701Z"; // 資料時間戳，用於新舊判斷
+const LAST_UPDATED = "2026-07-13";
+const DATA_TS = "2026-07-13T06:08:53.285Z"; // 資料時間戳，用於新舊判斷
 
 // ── 未實現持倉 ────────────────────────────────────────────────
 const POSITIONS = [
@@ -19,6 +19,7 @@ const POSITIONS = [
 
 // ── 已實現損益 ────────────────────────────────────────────────
 const REALIZED = [
+  { stock:"欣銓", buyDate:"2026-07-06", sellDate:"2026-07-13", cost:157460, proceeds:135742, pnl:-21718, pct:-13.79, note:"" },
   { stock:"聯策", buyDate:"2026-06-26", sellDate:"2026-07-09", cost:323121, proceeds:282599, pnl:-40522, pct:-12.54, note:"" },
   { stock:"均豪", buyDate:"2026-07-01", sellDate:"2026-07-09", cost:244579, proceeds:215268, pnl:-29311, pct:-11.98, note:"" },
   { stock:"世芯-KY（第四段）", buyDate:"2026-07-03", sellDate:"2026-07-07", cost:227940, proceeds:208192, pnl:-19748, pct:-8.66, note:"" },
@@ -81,6 +82,9 @@ const REALIZED = [
 
 // ── 交易明細 ──────────────────────────────────────────────────
 const TRADES = [
+  { date:"2026-07-13", stock:"欣銓", action:"SELL", price:224.5, shares:200, net:44749, fee:17, tax:134, note:"", oid:"k06iy" },
+  { date:"2026-07-13", stock:"欣銓", action:"SELL", price:224.5, shares:200, net:44749, fee:17, tax:134, note:"", oid:"k0688" },
+  { date:"2026-07-13", stock:"晶技", action:"SELL", price:196.5, shares:400, net:78334, fee:31, tax:235, note:"", oid:"k09SE" },
   { date:"2026-07-09", stock:"聯策", action:"SELL", price:179.5, shares:300, net:53668, fee:21, tax:161, note:"", oid:"r07mw" },
   { date:"2026-07-09", stock:"聯策", action:"SELL", price:179.5, shares:100, net:17890, fee:7, tax:53, note:"", oid:"r07gM" },
   { date:"2026-07-09", stock:"聯策", action:"SELL", price:179, shares:1000, net:178392, fee:71, tax:537, note:"", oid:"af785" },
@@ -547,7 +551,7 @@ const TRADES = [
   { date:"2025-01-06", stock:"鴻海", action:"SELL", price:183.5, shares:1000, net:182877, fee:73, tax:550, note:"", oid:"AT043" },
 ];
 
-// ── 淨值快照（每次更新持倉自動記錄；歷史由交易紀錄回填）─────────
+// ── 淨值快照（每次更新持倉自動記錄）───────────────────────────
 const SNAPSHOTS = [
   { date:"2025-01-03", value:2159252 },
   { date:"2025-01-10", value:1998335 },
@@ -631,6 +635,8 @@ const SNAPSHOTS = [
   { date:"2026-07-10", value:5586690 },
   { date:"2026-07-13", value:5561260 },
 ];
+
 // ── 現金股息紀錄 ─────────────────────────────────────────────
 const DIVIDENDS = [
+
 ];
