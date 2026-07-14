@@ -1,19 +1,18 @@
 // ═══════════════════════════════════════════════════════════════
-// data.js  ──  自動更新，請勿手動編輯（最後更新：2026-07-13）
+// data.js  ──  自動更新，請勿手動編輯（最後更新：2026-07-14）
 // ═══════════════════════════════════════════════════════════════
-const LAST_UPDATED = "2026-07-13";
-const DATA_TS = "2026-07-13T06:09:08.467Z"; // 資料時間戳，用於新舊判斷
+const LAST_UPDATED = "2026-07-14";
+const DATA_TS = "2026-07-14T05:51:08.611Z"; // 資料時間戳，用於新舊判斷
 
 // ── 未實現持倉 ────────────────────────────────────────────────
 const POSITIONS = [
-  { stock:"元大台灣50", code:"0050", type:"ETF", shares:8000, avgCost:61.76, price:106, value:846824, pnl:352560, pct:71.33 },
-  { stock:"富邦台50", code:"006208", type:"ETF", shares:11000, avgCost:99.23, price:246.75, value:2710524, pnl:1618624, pct:148.24 },
-  { stock:"復華富時不動產", code:"00712", type:"ETF", shares:12000, avgCost:9.61, price:8.87, value:106301, pnl:-9104, pct:-7.89 },
-  { stock:"國泰永續高股息", code:"00878", type:"ETF", shares:31000, avgCost:22.01, price:33.13, value:1025604, pnl:343122, pct:50.28 },
-  { stock:"群益台灣精選高息", code:"00919", type:"ETF", shares:6000, avgCost:22.57, price:29.71, value:178016, pnl:42574, pct:31.43 },
-  { stock:"晶技", code:"—", type:"股票", shares:1000, avgCost:219, price:193.5, value:192848, pnl:-26238, pct:-11.98 },
-  { stock:"松翰", code:"—", type:"股票", shares:3000, avgCost:67.77, price:65, value:194340, pnl:-9040, pct:-4.44 },
-  { stock:"盛群", code:"—", type:"股票", shares:2000, avgCost:74, price:70.2, value:139924, pnl:-8134, pct:-5.49 },
+  { stock:"元大台灣50", code:"0050", type:"ETF", shares:8000, avgCost:61.76, price:104.4, value:834045, pnl:339781, pct:68.74 },
+  { stock:"富邦台50", code:"006208", type:"ETF", shares:11000, avgCost:99.23, price:242.8, value:2667119, pnl:1575219, pct:144.26 },
+  { stock:"復華富時不動產", code:"00712", type:"ETF", shares:12000, avgCost:9.61, price:8.8, value:105461, pnl:-9944, pct:-8.62 },
+  { stock:"國泰永續高股息", code:"00878", type:"ETF", shares:31000, avgCost:22.01, price:32.72, value:1012918, pnl:330436, pct:48.42 },
+  { stock:"群益台灣精選高息", code:"00919", type:"ETF", shares:6000, avgCost:22.57, price:29.42, value:176278, pnl:40836, pct:30.15 },
+  { stock:"松翰", code:"—", type:"股票", shares:3000, avgCost:67.77, price:62.5, value:186867, pnl:-16513, pct:-8.12 },
+  { stock:"盛群", code:"—", type:"股票", shares:2000, avgCost:74, price:67.7, value:134940, pnl:-13118, pct:-8.86 },
 ];
 
 // ── 已實現損益 ────────────────────────────────────────────────
@@ -633,6 +632,7 @@ const SNAPSHOTS = [
   { date:"2026-07-03", value:6041290 },
   { date:"2026-07-10", value:5586690 },
   { date:"2026-07-13", value:5394381 },
+  { date:"2026-07-14", value:5117628 },
 ];
 
 // ── 現金股息紀錄 ─────────────────────────────────────────────
