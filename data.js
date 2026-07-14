@@ -2,7 +2,7 @@
 // data.js  ──  自動更新，請勿手動編輯（最後更新：2026-07-14）
 // ═══════════════════════════════════════════════════════════════
 const LAST_UPDATED = "2026-07-14";
-const DATA_TS = "2026-07-14T05:51:08.611Z"; // 資料時間戳，用於新舊判斷
+const DATA_TS = "2026-07-14T05:51:23.485Z"; // 資料時間戳，用於新舊判斷
 
 // ── 未實現持倉 ────────────────────────────────────────────────
 const POSITIONS = [
@@ -17,6 +17,7 @@ const POSITIONS = [
 
 // ── 已實現損益 ────────────────────────────────────────────────
 const REALIZED = [
+  { stock:"晶技", buyDate:"2026-07-02", sellDate:"2026-07-14", cost:308721, proceeds:260316, pnl:-48405, pct:-15.68, note:"" },
   { stock:"欣銓", buyDate:"2026-07-06", sellDate:"2026-07-13", cost:157460, proceeds:135742, pnl:-21718, pct:-13.79, note:"" },
   { stock:"聯策", buyDate:"2026-06-26", sellDate:"2026-07-09", cost:323121, proceeds:282599, pnl:-40522, pct:-12.54, note:"" },
   { stock:"均豪", buyDate:"2026-07-01", sellDate:"2026-07-09", cost:244579, proceeds:215268, pnl:-29311, pct:-11.98, note:"" },
@@ -80,6 +81,9 @@ const REALIZED = [
 
 // ── 交易明細 ──────────────────────────────────────────────────
 const TRADES = [
+  { date:"2026-07-14", stock:"晶技", action:"SELL", price:183, shares:300, net:54715, fee:21, tax:164, note:"", oid:"r0FA8" },
+  { date:"2026-07-14", stock:"晶技", action:"SELL", price:183.5, shares:200, net:36576, fee:14, tax:110, note:"", oid:"r0F6X" },
+  { date:"2026-07-14", stock:"晶技", action:"SELL", price:182, shares:500, net:90691, fee:36, tax:273, note:"", oid:"r0EYF" },
   { date:"2026-07-13", stock:"欣銓", action:"SELL", price:224.5, shares:200, net:44749, fee:17, tax:134, note:"", oid:"k06iy" },
   { date:"2026-07-13", stock:"欣銓", action:"SELL", price:224.5, shares:200, net:44749, fee:17, tax:134, note:"", oid:"k0688" },
   { date:"2026-07-13", stock:"晶技", action:"SELL", price:196.5, shares:400, net:78334, fee:31, tax:235, note:"", oid:"k09SE" },
