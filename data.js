@@ -1,8 +1,8 @@
 // ═══════════════════════════════════════════════════════════════
-// data.js  ──  自動更新，請勿手動編輯（最後更新：2026-07-14）
+// data.js  ──  自動更新，請勿手動編輯（最後更新：2026-07-16）
 // ═══════════════════════════════════════════════════════════════
-const LAST_UPDATED = "2026-07-14";
-const DATA_TS = "2026-07-14T05:51:23.485Z"; // 資料時間戳，用於新舊判斷
+const LAST_UPDATED = "2026-07-16";
+const DATA_TS = "2026-07-16T05:25:57.486Z"; // 資料時間戳，用於新舊判斷
 
 // ── 未實現持倉 ────────────────────────────────────────────────
 const POSITIONS = [
@@ -17,6 +17,8 @@ const POSITIONS = [
 
 // ── 已實現損益 ────────────────────────────────────────────────
 const REALIZED = [
+  { stock:"盛群", buyDate:"2026-07-09", sellDate:"2026-07-16", cost:148058, proceeds:128364, pnl:-19694, pct:-13.3, note:"" },
+  { stock:"松翰", buyDate:"2026-07-09", sellDate:"2026-07-16", cost:203380, proceeds:179389, pnl:-23991, pct:-11.8, note:"" },
   { stock:"晶技", buyDate:"2026-07-02", sellDate:"2026-07-14", cost:308721, proceeds:260316, pnl:-48405, pct:-15.68, note:"" },
   { stock:"欣銓", buyDate:"2026-07-06", sellDate:"2026-07-13", cost:157460, proceeds:135742, pnl:-21718, pct:-13.79, note:"" },
   { stock:"聯策", buyDate:"2026-06-26", sellDate:"2026-07-09", cost:323121, proceeds:282599, pnl:-40522, pct:-12.54, note:"" },
@@ -81,6 +83,14 @@ const REALIZED = [
 
 // ── 交易明細 ──────────────────────────────────────────────────
 const TRADES = [
+  { date:"2026-07-16", stock:"力積電", action:"BUY", price:76.8, shares:1000, net:-76830, fee:30, tax:0, note:"", oid:"ak844" },
+  { date:"2026-07-16", stock:"力積電", action:"BUY", price:77.5, shares:1000, net:-77530, fee:30, tax:0, note:"", oid:"aQ914" },
+  { date:"2026-07-16", stock:"盛群", action:"SELL", price:64.4, shares:1000, net:64182, fee:25, tax:193, note:"", oid:"ak730" },
+  { date:"2026-07-16", stock:"盛群", action:"SELL", price:64.4, shares:1000, net:64182, fee:25, tax:193, note:"", oid:"ak454" },
+  { date:"2026-07-16", stock:"松翰", action:"SELL", price:60, shares:3000, net:179389, fee:71, tax:540, note:"", oid:"an353" },
+  { date:"2026-07-16", stock:"雙鍵", action:"BUY", price:355, shares:100, net:-35514, fee:14, tax:0, note:"", oid:"r05j5" },
+  { date:"2026-07-16", stock:"雙鍵", action:"BUY", price:356, shares:100, net:-35614, fee:14, tax:0, note:"", oid:"r02m3" },
+  { date:"2026-07-16", stock:"雙鍵", action:"BUY", price:358.5, shares:100, net:-35864, fee:14, tax:0, note:"", oid:"r00w2" },
   { date:"2026-07-14", stock:"晶技", action:"SELL", price:183, shares:300, net:54715, fee:21, tax:164, note:"", oid:"r0FA8" },
   { date:"2026-07-14", stock:"晶技", action:"SELL", price:183.5, shares:200, net:36576, fee:14, tax:110, note:"", oid:"r0F6X" },
   { date:"2026-07-14", stock:"晶技", action:"SELL", price:182, shares:500, net:90691, fee:36, tax:273, note:"", oid:"r0EYF" },
