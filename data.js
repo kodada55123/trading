@@ -2,17 +2,17 @@
 // data.js  ──  自動更新，請勿手動編輯（最後更新：2026-07-16）
 // ═══════════════════════════════════════════════════════════════
 const LAST_UPDATED = "2026-07-16";
-const DATA_TS = "2026-07-16T05:25:57.486Z"; // 資料時間戳，用於新舊判斷
+const DATA_TS = "2026-07-16T05:26:08.820Z"; // 資料時間戳，用於新舊判斷
 
 // ── 未實現持倉 ────────────────────────────────────────────────
 const POSITIONS = [
-  { stock:"元大台灣50", code:"0050", type:"ETF", shares:8000, avgCost:61.76, price:104.4, value:834045, pnl:339781, pct:68.74 },
-  { stock:"富邦台50", code:"006208", type:"ETF", shares:11000, avgCost:99.23, price:242.8, value:2667119, pnl:1575219, pct:144.26 },
-  { stock:"復華富時不動產", code:"00712", type:"ETF", shares:12000, avgCost:9.61, price:8.8, value:105461, pnl:-9944, pct:-8.62 },
-  { stock:"國泰永續高股息", code:"00878", type:"ETF", shares:31000, avgCost:22.01, price:32.72, value:1012918, pnl:330436, pct:48.42 },
-  { stock:"群益台灣精選高息", code:"00919", type:"ETF", shares:6000, avgCost:22.57, price:29.42, value:176278, pnl:40836, pct:30.15 },
-  { stock:"松翰", code:"—", type:"股票", shares:3000, avgCost:67.77, price:62.5, value:186867, pnl:-16513, pct:-8.12 },
-  { stock:"盛群", code:"—", type:"股票", shares:2000, avgCost:74, price:67.7, value:134940, pnl:-13118, pct:-8.86 },
+  { stock:"元大台灣50", code:"0050", type:"ETF", shares:8000, avgCost:61.76, price:106.4, value:850024, pnl:355760, pct:71.98 },
+  { stock:"富邦台50", code:"006208", type:"ETF", shares:11000, avgCost:99.23, price:242.3, value:2661620, pnl:1569720, pct:143.76 },
+  { stock:"復華富時不動產", code:"00712", type:"ETF", shares:12000, avgCost:9.61, price:9.02, value:108095, pnl:-7310, pct:-6.33 },
+  { stock:"國泰永續高股息", code:"00878", type:"ETF", shares:31000, avgCost:22.01, price:32.93, value:1019421, pnl:336939, pct:49.37 },
+  { stock:"群益台灣精選高息", code:"00919", type:"ETF", shares:6000, avgCost:22.57, price:29.52, value:176876, pnl:41434, pct:30.59 },
+  { stock:"雙鍵", code:"—", type:"股票", shares:300, avgCost:356.5, price:328.5, value:98217, pnl:-8775, pct:-8.2 },
+  { stock:"力積電", code:"—", type:"股票", shares:2000, avgCost:77.15, price:76.3, value:152084, pnl:-2276, pct:-1.47 },
 ];
 
 // ── 已實現損益 ────────────────────────────────────────────────
@@ -647,6 +647,7 @@ const SNAPSHOTS = [
   { date:"2026-07-10", value:5586690 },
   { date:"2026-07-13", value:5394381 },
   { date:"2026-07-14", value:5117628 },
+  { date:"2026-07-16", value:5066337 },
 ];
 
 // ── 現金股息紀錄 ─────────────────────────────────────────────
