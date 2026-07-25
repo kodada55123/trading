@@ -2,19 +2,16 @@
 // data.js  ──  自動更新，請勿手動編輯（最後更新：2026-07-25）
 // ═══════════════════════════════════════════════════════════════
 const LAST_UPDATED = "2026-07-25";
-const DATA_TS = "2026-07-25T15:11:04.917Z"; // 資料時間戳，用於新舊判斷
+const DATA_TS = "2026-07-25T15:11:24.141Z"; // 資料時間戳，用於新舊判斷
 
 // ── 未實現持倉 ────────────────────────────────────────────────
 const POSITIONS = [
-  { stock:"元大台灣50", code:"0050", type:"ETF", shares:8000, avgCost:61.76, price:105.8, value:845231, pnl:350967, pct:71.01 },
-  { stock:"富邦台50", code:"006208", type:"ETF", shares:11000, avgCost:99.23, price:245.7, value:2698985, pnl:1607085, pct:147.18 },
-  { stock:"復華富時不動產", code:"00712", type:"ETF", shares:12000, avgCost:9.61, price:8.79, value:105342, pnl:-10063, pct:-8.72 },
-  { stock:"國泰永續高股息", code:"00878", type:"ETF", shares:31000, avgCost:22.01, price:33.19, value:1027465, pnl:344983, pct:50.55 },
-  { stock:"群益台灣精選高息", code:"00919", type:"ETF", shares:6000, avgCost:22.57, price:29.97, value:179576, pnl:44134, pct:32.59 },
-  { stock:"晶技", code:"—", type:"股票", shares:1400, avgCost:220.43, price:200, value:279056, pnl:-29665, pct:-9.61 },
-  { stock:"欣銓", code:"—", type:"股票", shares:400, avgCost:262, price:235, value:93683, pnl:-11157, pct:-10.64 },
-  { stock:"松翰", code:"—", type:"股票", shares:3000, avgCost:67.77, price:67.6, value:202116, pnl:-1264, pct:-0.62 },
-  { stock:"盛群", code:"—", type:"股票", shares:2000, avgCost:74, price:73.3, value:146104, pnl:-1954, pct:-1.32 },
+  { stock:"元大台灣50", code:"0050", type:"ETF", shares:8000, avgCost:61.76, price:101.7, value:812473, pnl:318209, pct:64.38 },
+  { stock:"富邦台50", code:"006208", type:"ETF", shares:11000, avgCost:99.23, price:233, value:2559465, pnl:1467565, pct:134.4 },
+  { stock:"復華富時不動產", code:"00712", type:"ETF", shares:12000, avgCost:9.61, price:8.78, value:105222, pnl:-10183, pct:-8.82 },
+  { stock:"國泰永續高股息", code:"00878", type:"ETF", shares:31000, avgCost:22.01, price:32.61, value:1009506, pnl:327024, pct:47.92 },
+  { stock:"群益台灣精選高息", code:"00919", type:"ETF", shares:6000, avgCost:22.57, price:29.49, value:176698, pnl:41256, pct:30.46 },
+  { stock:"貿聯-KY", code:"—", type:"股票", shares:95, avgCost:2206.32, price:2205, value:208766, pnl:-916, pct:-0.44 },
 ];
 
 // ── 已實現損益 ────────────────────────────────────────────────
