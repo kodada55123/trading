@@ -1,70 +1,17 @@
 // ═══════════════════════════════════════════════════════════════
-// data.js  ──  自動更新，請勿手動編輯（最後更新：2026-07-09）
+// data.js  ──  自動更新，請勿手動編輯（最後更新：2026-07-27）
 // ═══════════════════════════════════════════════════════════════
-const US_CASH = 1504.81;
-const USD_TWD = 32.34;
-const LAST_UPDATED = "2026-07-25";
-const DATA_TS = "2026-07-25T14:30:00.000000+00:00"; // 資料時間戳，用於新舊判斷
-
-// ── 投資型保單 ────────────────────────────────────────────────
-const INSURANCE_POSITIONS = [
-  { name:"投資型保單 A", startDate:"2025-01-20", premium:300000, value:296873, distribution:38465, currency:"TWD" },
-  { name:"投資型保單 B", startDate:"2024-12-28", premium:1000000, value:1109741, distribution:133223, currency:"TWD" },
-];
-
-// ── 現金存款與流動資金 ──────────────────────────────────────────
-const CASH_ACCOUNTS = [
-  { bank: "國泰世華銀行", account: "活期存款", amount: 35275, type: "銀行活存", currency: "TWD" },
-  { bank: "LINE Bank", account: "主帳戶 (111-0025-95533)", amount: 49407, type: "網購/日常", currency: "TWD" },
-  { bank: "LINE Bank", account: "口袋帳戶", amount: 500000, type: "高利活存", currency: "TWD" },
-  { bank: "國泰證券戶", account: "證券活期儲蓄存款 (204530005121)", amount: 798540, type: "交割交割備用", currency: "TWD" },
-  { bank: "國泰世華", account: "活期儲蓄存款 (237506068282)", amount: 112, type: "銀行備用", currency: "TWD" },
-];
-
-// ── 負債貸款 ──────────────────────────────────────────────────
-const LIABILITIES = [
-  { bank: "國泰世華銀行", type: "房貸", name: "房屋抵押貸款", amount: 7568916, currency: "TWD" }
-];
-
-// ── 不動產房地產 (實價登錄估值) ─────────────────────────────────
-const REAL_ESTATE = [
-  {
-    community: "御藏",
-    address: "桃園市八德區仁德路153號11樓 (含 B2 坡道平面車位)",
-    type: "住宅大樓 ＋ B2 車位",
-    estimatedUnitUnitPrice: "房屋 35 萬/坪 ＋ B2車位 150萬",
-    estimatedValue: 15500000,
-    mortgage: 7568916,
-    netEquity: 7931084,
-    currency: "TWD"
-  }
-];
-
+const LAST_UPDATED = "2026-07-27";
+const DATA_TS = "2026-07-27T03:24:19.243Z"; // 資料時間戳，用於新舊判斷
 
 // ── 未實現持倉 ────────────────────────────────────────────────
-const US_POSITIONS = [
-  { stock:"Amkor Technology", code:"AMKR", type:"股票", shares:30, avgCost:72.46, price:64.96, value:1948.8, pnl:-225.0, pct:-10.35, currency:"USD" },
-  { stock:"Broadcom", code:"AVGO", type:"股票", shares:6, avgCost:394.0, price:381.92, value:2291.52, pnl:-72.48, pct:-3.07, currency:"USD" },
-  { stock:"Coherent", code:"COHR", type:"股票", shares:10, avgCost:381.81, price:282.39, value:2823.9, pnl:-994.2, pct:-26.04, currency:"USD" },
-  { stock:"CrowdStrike", code:"CRWD", type:"股票", shares:4, avgCost:167.63, price:183.28, value:733.12, pnl:62.6, pct:9.34, currency:"USD" },
-  { stock:"Microsoft", code:"MSFT", type:"股票", shares:6, avgCost:407.41, price:381.7, value:2290.2, pnl:-154.26, pct:-6.31, currency:"USD" },
-  { stock:"Micron", code:"MU", type:"股票", shares:6, avgCost:913.38, price:920.95, value:5525.7, pnl:45.42, pct:0.83, currency:"USD" },
-  { stock:"ON Semi", code:"ON", type:"股票", shares:30, avgCost:99.05, price:86.81, value:2604.3, pnl:-367.2, pct:-12.36, currency:"USD" },
-  { stock:"Invesco QQQ ETF", code:"QQQ", type:"ETF", shares:5, avgCost:604.54, price:684.23, value:3421.15, pnl:398.45, pct:13.18, currency:"USD" },
-  { stock:"Tesla", code:"TSLA", type:"股票", shares:4, avgCost:408.27, price:313.03, value:1252.12, pnl:-380.96, pct:-23.33, currency:"USD" },
-  { stock:"TSMC", code:"TSM", type:"股票", shares:15, avgCost:400.52, price:403.41, value:6051.15, pnl:43.35, pct:0.72, currency:"USD" },
-];
-
 const POSITIONS = [
-  { stock:"元大台灣50", code:"0050", type:"ETF", shares:8000, avgCost:61.76, price:105.8, value:845231, pnl:350967, pct:71.01 },
-  { stock:"富邦台50", code:"006208", type:"ETF", shares:11000, avgCost:99.23, price:245.7, value:2698985, pnl:1607085, pct:147.18 },
-  { stock:"復華富時不動產", code:"00712", type:"ETF", shares:12000, avgCost:9.61, price:8.79, value:105342, pnl:-10063, pct:-8.72 },
-  { stock:"國泰永續高股息", code:"00878", type:"ETF", shares:31000, avgCost:22.01, price:33.19, value:1027465, pnl:344983, pct:50.55 },
-  { stock:"群益台灣精選高息", code:"00919", type:"ETF", shares:6000, avgCost:22.57, price:29.97, value:179576, pnl:44134, pct:32.59 },
-  { stock:"晶技", code:"—", type:"股票", shares:1400, avgCost:220.43, price:200, value:279056, pnl:-29665, pct:-9.61 },
-  { stock:"欣銓", code:"—", type:"股票", shares:400, avgCost:262, price:235, value:93683, pnl:-11157, pct:-10.64 },
-  { stock:"松翰", code:"—", type:"股票", shares:3000, avgCost:67.77, price:67.6, value:202116, pnl:-1264, pct:-0.62 },
-  { stock:"盛群", code:"—", type:"股票", shares:2000, avgCost:74, price:73.3, value:146104, pnl:-1954, pct:-1.32 },
+  { stock:"元大台灣50", code:"0050", type:"ETF", shares:8000, avgCost:61.76, price:100.75, value:804879, pnl:310615, pct:62.84 },
+  { stock:"富邦台50", code:"006208", type:"ETF", shares:11000, avgCost:99.23, price:231.15, value:2539123, pnl:1447223, pct:132.54 },
+  { stock:"復華富時不動產", code:"00712", type:"ETF", shares:12000, avgCost:9.61, price:8.82, value:105701, pnl:-9704, pct:-8.41 },
+  { stock:"國泰永續高股息", code:"00878", type:"ETF", shares:31000, avgCost:22.01, price:32.24, value:998060, pnl:315578, pct:46.24 },
+  { stock:"群益台灣精選高息", code:"00919", type:"ETF", shares:6000, avgCost:22.57, price:29.49, value:176698, pnl:41256, pct:30.46 },
+  { stock:"貿聯-KY", code:"—", type:"股票", shares:95, avgCost:2206.32, price:2150, value:203558, pnl:-6124, pct:-2.92 },
 ];
 
 // ── 已實現損益 ────────────────────────────────────────────────
@@ -131,6 +78,8 @@ const REALIZED = [
 
 // ── 交易明細 ──────────────────────────────────────────────────
 const TRADES = [
+  { date:"2026-07-22", stock:"貿聯-KY", action:"BUY", price:2140, shares:50, net:-107042, fee:42, tax:0, note:"", oid:"r08ZG" },
+  { date:"2026-07-23", stock:"貿聯-KY", action:"BUY", price:2280, shares:45, net:-102640, fee:40, tax:0, note:"", oid:"r09ER" },
   { date:"2026-07-09", stock:"聯策", action:"SELL", price:179.5, shares:300, net:53668, fee:21, tax:161, note:"", oid:"r07mw" },
   { date:"2026-07-09", stock:"聯策", action:"SELL", price:179.5, shares:100, net:17890, fee:7, tax:53, note:"", oid:"r07gM" },
   { date:"2026-07-09", stock:"聯策", action:"SELL", price:179, shares:1000, net:178392, fee:71, tax:537, note:"", oid:"af785" },
@@ -597,7 +546,7 @@ const TRADES = [
   { date:"2025-01-06", stock:"鴻海", action:"SELL", price:183.5, shares:1000, net:182877, fee:73, tax:550, note:"", oid:"AT043" },
 ];
 
-// ── 淨值快照（每次更新持倉自動記錄；歷史由交易紀錄回填）─────────
+// ── 淨值快照（每次更新持倉自動記錄）───────────────────────────
 const SNAPSHOTS = [
   { date:"2025-01-03", value:2159252 },
   { date:"2025-01-10", value:1998335 },
@@ -679,8 +628,14 @@ const SNAPSHOTS = [
   { date:"2026-06-26", value:5605278 },
   { date:"2026-07-03", value:6041290 },
   { date:"2026-07-10", value:5586690 },
-  { date:"2026-07-13", value:5561260 },
+  { date:"2026-07-13", value:5394381 },
+  { date:"2026-07-14", value:5117628 },
+  { date:"2026-07-16", value:5066337 },
+  { date:"2026-07-25", value:4872130 },
+  { date:"2026-07-27", value:4828019 },
 ];
+
 // ── 現金股息紀錄 ─────────────────────────────────────────────
 const DIVIDENDS = [
+
 ];
