@@ -1,17 +1,82 @@
 // ═══════════════════════════════════════════════════════════════
-// data.js  ──  自動更新，請勿手動編輯（最後更新：2026-07-27）
+// data.js  ──  自動更新，請勿手動編輯（最後更新：2026-08-24）
 // ═══════════════════════════════════════════════════════════════
-const LAST_UPDATED = "2026-07-27";
-const DATA_TS = "2026-07-27T03:24:19.243Z"; // 資料時間戳，用於新舊判斷
+const US_CASH = 1504.81;
+const USD_TWD = 31.824;
+const LAST_UPDATED = "2026-08-24";
+const DATA_TS = "2026-08-24T18:57:56+08:00"; // 台股為最新券商清單；其他資產保留各自來源日期
+
+// ── 投資型保單 ────────────────────────────────────────────────
+const INSURANCE_POSITIONS = [
+  {
+    name:"安達人壽富貴大贏家變額年金保險（30萬）",
+    startDate:"2025-01-20", asOf:"2026-06-30", premium:300000,
+    surrenderValue:275044, value:298961, distribution:36166, fees:11809,
+    statementReturn:3.59, inclusiveReturn:15.64, currency:"TWD"
+  },
+  {
+    name:"安達人壽富貴大贏家變額年金保險（100萬）",
+    startDate:"2024-12-28", asOf:"2026-06-30", premium:1000000,
+    surrenderValue:1072940, value:1166239, distribution:125370, fees:37603,
+    statementReturn:20.38, inclusiveReturn:32.92, currency:"TWD"
+  },
+];
+
+// ── 現金存款與流動資金 ──────────────────────────────────────────
+const CASH_ACCOUNTS = [
+  { bank: "國泰世華銀行", account: "活期存款", amount: 35275, type: "銀行活存", currency: "TWD" },
+  { bank: "LINE Bank", account: "主帳戶 (111-0025-95533)", amount: 49407, type: "網購/日常", currency: "TWD" },
+  { bank: "LINE Bank", account: "口袋帳戶", amount: 500000, type: "高利活存", currency: "TWD" },
+  { bank: "國泰證券戶", account: "證券活期儲蓄存款 (204530005121)", amount: 798540, type: "交割交割備用", currency: "TWD" },
+  { bank: "國泰世華", account: "活期儲蓄存款 (237506068282)", amount: 112, type: "銀行備用", currency: "TWD" },
+];
+
+// ── 負債貸款 ──────────────────────────────────────────────────
+const LIABILITIES = [
+  { bank: "國泰世華銀行", type: "房貸", name: "房屋抵押貸款", amount: 7568916, currency: "TWD" }
+];
+
+// ── 不動產房地產 (實價登錄估值) ─────────────────────────────────
+const REAL_ESTATE = [
+  {
+    community: "御藏",
+    address: "桃園市八德區仁德路153號11樓 (含 B2 坡道平面車位)",
+    type: "住宅大樓 ＋ B2 車位",
+    estimatedUnitUnitPrice: "房屋 35 萬/坪 ＋ B2車位 150萬",
+    estimatedValue: 15500000,
+    mortgage: 7568916,
+    netEquity: 7931084,
+    currency: "TWD"
+  }
+];
+
 
 // ── 未實現持倉 ────────────────────────────────────────────────
+// 美股部位：2026-08-20 Firstrade 快照；行情更新於 2026-08-24 18:57。
+const US_POSITIONS = [
+  { stock:"Advanced Micro Devices", code:"AMD", type:"股票", shares:8, avgCost:484.13, price:473.25, value:3786.00, pnl:-87.04, pct:-2.25, currency:"USD" },
+  { stock:"Broadcom", code:"AVGO", type:"股票", shares:8, avgCost:399.622, price:368.45, value:2947.60, pnl:-249.37, pct:-7.80, currency:"USD" },
+  { stock:"Alphabet", code:"GOOG", type:"股票", shares:12, avgCost:338.923, price:341.75, value:4101.00, pnl:33.92, pct:0.83, currency:"USD" },
+  { stock:"Marvell Technology", code:"MRVL", type:"股票", shares:4, avgCost:232.1, price:237.04, value:948.16, pnl:19.76, pct:2.13, currency:"USD" },
+  { stock:"Microsoft", code:"MSFT", type:"股票", shares:5, avgCost:407.411, price:483.24, value:2416.20, pnl:379.15, pct:18.61, currency:"USD" },
+  { stock:"Micron", code:"MU", type:"股票", shares:5, avgCost:921.978, price:966.78, value:4833.90, pnl:224.01, pct:4.86, currency:"USD" },
+  { stock:"Invesco QQQ ETF", code:"QQQ", type:"ETF", shares:4, avgCost:604.536, price:713.44, value:2853.76, pnl:435.62, pct:18.01, currency:"USD" },
+  { stock:"TSMC", code:"TSM", type:"股票", shares:15, avgCost:400.519, price:418.95, value:6284.25, pnl:276.47, pct:4.60, currency:"USD" },
+];
+
+// 台股部位：2026-08-24 券商清單；行情更新於 2026-08-24 18:57。
 const POSITIONS = [
-  { stock:"元大台灣50", code:"0050", type:"ETF", shares:8000, avgCost:61.76, price:100.75, value:804879, pnl:310615, pct:62.84 },
-  { stock:"富邦台50", code:"006208", type:"ETF", shares:11000, avgCost:99.23, price:231.15, value:2539123, pnl:1447223, pct:132.54 },
-  { stock:"復華富時不動產", code:"00712", type:"ETF", shares:12000, avgCost:9.61, price:8.82, value:105701, pnl:-9704, pct:-8.41 },
-  { stock:"國泰永續高股息", code:"00878", type:"ETF", shares:31000, avgCost:22.01, price:32.24, value:998060, pnl:315578, pct:46.24 },
-  { stock:"群益台灣精選高息", code:"00919", type:"ETF", shares:6000, avgCost:22.57, price:29.49, value:176698, pnl:41256, pct:30.46 },
-  { stock:"貿聯-KY", code:"—", type:"股票", shares:95, avgCost:2206.32, price:2150, value:203558, pnl:-6124, pct:-2.92 },
+  { stock:"元大台灣50", code:"0050", type:"ETF", shares:8500, avgCost:63.65, price:103.80, value:882300.00, pnl:341275.00, pct:63.08 },
+  { stock:"富邦台50", code:"006208", type:"ETF", shares:11000, avgCost:99.23, price:238.20, value:2620200.00, pnl:1528670.00, pct:140.05 },
+  { stock:"復華富時不動產", code:"00712", type:"ETF", shares:12000, avgCost:9.61, price:8.84, value:106080.00, pnl:-9240.00, pct:-8.01 },
+  { stock:"國泰永續高股息", code:"00878", type:"ETF", shares:31000, avgCost:22.01, price:32.43, value:1005330.00, pnl:323020.00, pct:47.34 },
+  { stock:"群益台灣精選高息", code:"00919", type:"ETF", shares:6000, avgCost:22.57, price:30.65, value:183900.00, pnl:48480.00, pct:35.80 },
+  { stock:"光寶科", code:"2301", type:"股票", shares:400, avgCost:251.25, price:287.00, value:114800.00, pnl:14300.00, pct:14.23 },
+  { stock:"順德", code:"2351", type:"股票", shares:300, avgCost:185.05, price:200.50, value:60150.00, pnl:4635.00, pct:8.35 },
+  { stock:"聯發科", code:"2454", type:"股票", shares:60, avgCost:3951.25, price:3765.00, value:225900.00, pnl:-11175.00, pct:-4.71 },
+  { stock:"希華", code:"2484", type:"股票", shares:1000, avgCost:75.9, price:72.10, value:72100.00, pnl:-3800.00, pct:-5.01 },
+  { stock:"精誠", code:"6214", type:"股票", shares:1000, avgCost:152.05, price:179.50, value:179500.00, pnl:27450.00, pct:18.05 },
+  { stock:"群聯", code:"8299", type:"股票", shares:74, avgCost:2115.27, price:2135.00, value:157990.00, pnl:1460.02, pct:0.93 },
 ];
 
 // ── 已實現損益 ────────────────────────────────────────────────
@@ -78,8 +143,6 @@ const REALIZED = [
 
 // ── 交易明細 ──────────────────────────────────────────────────
 const TRADES = [
-  { date:"2026-07-22", stock:"貿聯-KY", action:"BUY", price:2140, shares:50, net:-107042, fee:42, tax:0, note:"", oid:"r08ZG" },
-  { date:"2026-07-23", stock:"貿聯-KY", action:"BUY", price:2280, shares:45, net:-102640, fee:40, tax:0, note:"", oid:"r09ER" },
   { date:"2026-07-09", stock:"聯策", action:"SELL", price:179.5, shares:300, net:53668, fee:21, tax:161, note:"", oid:"r07mw" },
   { date:"2026-07-09", stock:"聯策", action:"SELL", price:179.5, shares:100, net:17890, fee:7, tax:53, note:"", oid:"r07gM" },
   { date:"2026-07-09", stock:"聯策", action:"SELL", price:179, shares:1000, net:178392, fee:71, tax:537, note:"", oid:"af785" },
@@ -546,7 +609,7 @@ const TRADES = [
   { date:"2025-01-06", stock:"鴻海", action:"SELL", price:183.5, shares:1000, net:182877, fee:73, tax:550, note:"", oid:"AT043" },
 ];
 
-// ── 淨值快照（每次更新持倉自動記錄）───────────────────────────
+// ── 淨值快照（每次更新持倉自動記錄；歷史由交易紀錄回填）─────────
 const SNAPSHOTS = [
   { date:"2025-01-03", value:2159252 },
   { date:"2025-01-10", value:1998335 },
@@ -628,14 +691,11 @@ const SNAPSHOTS = [
   { date:"2026-06-26", value:5605278 },
   { date:"2026-07-03", value:6041290 },
   { date:"2026-07-10", value:5586690 },
-  { date:"2026-07-13", value:5394381 },
-  { date:"2026-07-14", value:5117628 },
-  { date:"2026-07-16", value:5066337 },
-  { date:"2026-07-25", value:4872130 },
-  { date:"2026-07-27", value:4828019 },
+  { date:"2026-07-13", value:5561260 },
+  { date:"2026-08-03", value:4837455 },
+  { date:"2026-08-04", value:4921685 },
+  { date:"2026-08-07", value:5501960 },
 ];
-
 // ── 現金股息紀錄 ─────────────────────────────────────────────
 const DIVIDENDS = [
-
 ];
