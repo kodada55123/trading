@@ -2,9 +2,18 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
+<meta name="theme-color" content="#161b22">
+<meta name="description" content="個人資產、持倉、交易與投資紀律管理系統">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="資產系統">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <title>交易日誌｜Trading Journal</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="data.js?v=20260726_v3"></script>
@@ -16,7 +25,9 @@
   --gold:#f0a832;--purple:#bc8cff;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:14px;line-height:1.6;}
+html{overflow-x:hidden;-webkit-text-size-adjust:100%;}
+body{min-width:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:14px;line-height:1.6;overflow-x:hidden;}
+button,input,select,textarea{font:inherit;}
 
 .container{max-width:1280px;margin:0 auto;padding:0 20px;}
 header{background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 0;position:sticky;top:0;z-index:100;}
@@ -88,6 +99,8 @@ tr:hover td{background:rgba(255,255,255,.03);}
 .sync-dot.ok{background:var(--green);}
 .sync-dot.err{background:var(--red);}
 .sync-dot.busy{background:var(--gold);animation:pulse .8s infinite;}
+.install-btn{display:none;background:rgba(88,166,255,.1);border:1px solid rgba(88,166,255,.45);color:var(--blue);padding:4px 9px;border-radius:6px;cursor:pointer;font-size:12px;}
+.install-btn.ready{display:inline-flex;align-items:center;white-space:nowrap;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .sync-setup{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:20px;}
 .sync-setup h3{margin:0 0 6px;font-size:14px;color:#fff;}
@@ -199,14 +212,17 @@ tr:hover td{background:rgba(255,255,255,.03);}
 ═══════════════════════════════ */
 @media(max-width:640px){
   /* ── Layout ── */
-  .container{padding:0 12px;}
+  .container{width:100%;min-width:0;padding:0 12px;}
   body{font-size:13px;}
   h2{font-size:14px;margin:14px 0 10px;}
 
   /* ── Header: compact, nav hidden (replaced by bottom bar) ── */
-  header{padding:9px 0;}
+  header{padding:9px 0;padding-top:max(9px,env(safe-area-inset-top));}
+  .header-inner{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;}
   .nav{display:none;}               /* hide top nav on mobile */
-  .logo{font-size:15px;}
+  .logo{min-width:0;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .updated{grid-column:1/-1;font-size:11px;}
+  .header-inner>div:last-child{min-width:0;gap:8px!important;justify-content:flex-end;}
   .sync-bar{font-size:11px;gap:5px;}
   #sync-text{display:none;}         /* show dot only */
 
@@ -215,22 +231,23 @@ tr:hover td{background:rgba(255,255,255,.03);}
     display:flex;
     position:fixed;bottom:0;left:0;right:0;
     background:var(--bg2);border-top:1px solid var(--border);
-    z-index:200;padding:0;
+    z-index:200;padding:0;overflow-x:auto;
+    overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;
     padding-bottom:env(safe-area-inset-bottom);
   }
   .mobile-nav button{
-    flex:1;display:flex;flex-direction:column;align-items:center;
-    gap:2px;padding:8px 2px 6px;background:none;border:none;
+    flex:1 0 54px;min-width:54px;min-height:52px;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;gap:2px;padding:6px 2px 5px;background:none;border:none;
     color:var(--muted);font-size:10px;cursor:pointer;
     border-top:2px solid transparent;transition:.15s;
     font-family:inherit;
   }
   .mobile-nav button .mn-icon{font-size:18px;line-height:1;}
   .mobile-nav button.active{color:var(--blue);border-top-color:var(--blue);}
-  .container{padding-bottom:80px!important;}
+  body>.container{padding-bottom:calc(72px + env(safe-area-inset-bottom))!important;}
 
   /* ── Cards: 1 column for clarity on mobile ── */
-  .cards{grid-template-columns:1fr;gap:10px;margin:14px 0;}
+  .cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:14px 0;}
   .card{padding:13px 15px;}
   .card-label{font-size:11px;}
   .card-val{font-size:18px;font-weight:700;}
@@ -238,7 +255,7 @@ tr:hover td{background:rgba(255,255,255,.03);}
 
   /* ── Tables: full width scrolling ── */
   .tbl-wrap{width:100%!important;overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;margin-bottom:16px;}
-  table{width:100%!important;min-width:580px;}
+  table{width:100%!important;min-width:560px;}
   th,td{padding:9px 10px;font-size:12px;}
 
   /* Positions: hide 類別(2), 均價(4) */
@@ -272,7 +289,11 @@ tr:hover td{background:rgba(255,255,255,.03);}
 
   /* ── Filters ── */
   .filters input,.filters select{font-size:12px;padding:5px 8px;}
-  .filters{gap:6px;}
+  .filters{display:grid;grid-template-columns:minmax(0,1fr) 1fr;gap:6px;}
+  .filters input{grid-column:1/-1;width:100%;min-height:42px;}
+  .filters select{width:100%;min-width:0;min-height:42px;}
+  .journal-filter input{width:100%;min-height:42px;}
+  .btn{min-height:42px;justify-content:center;}
 
   /* ── Upload ── */
   .paste-wrap{padding:12px;}
@@ -280,6 +301,11 @@ tr:hover td{background:rgba(255,255,255,.03);}
   .import-grid{grid-template-columns:1fr!important;}
   .sync-setup{padding:14px;}
   .sync-step{font-size:12px;}
+}
+
+@media(max-width:360px){
+  .cards{grid-template-columns:1fr;}
+  .mobile-nav button{flex-basis:52px;min-width:52px;}
 }
 
 </style>
@@ -300,6 +326,7 @@ tr:hover td{background:rgba(255,255,255,.03);}
         <button class="accent" onclick="showSection('upload',this)">⬆ 資料更新</button>
       </div>
       <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <button type="button" class="install-btn" id="install-app">安裝 App</button>
         <div class="updated">更新：<span id="updated-date"></span></div>
         <div class="sync-bar" id="sync-bar">
           <span class="sync-dot" id="sync-dot"></span>
@@ -486,7 +513,7 @@ tr:hover td{background:rgba(255,255,255,.03);}
       <div class="sync-fields">
         <div>
           <label>GitHub Personal Access Token</label>
-          <input type="password" id="gist-token" placeholder="ghp_xxxxxxxxxxxx">
+          <input type="password" id="gist-token" placeholder="GitHub Token（本分頁有效）">
         </div>
         <div>
           <label>Gist ID（網址最後 32 碼）</label>
@@ -508,7 +535,7 @@ tr:hover td{background:rgba(255,255,255,.03);}
       <div class="sync-fields">
         <div>
           <label>GitHub Token（需有 public_repo 權限）</label>
-          <input type="password" id="repo-token" placeholder="ghp_xxxxxxxxxxxx">
+          <input type="password" id="repo-token" placeholder="GitHub Token（本分頁有效）">
         </div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
@@ -792,7 +819,12 @@ function renderAll() {
 
   const insuranceTotal = _INSURANCE.reduce((s,p) => s + p.value, 0);
   const insurancePremium = _INSURANCE.reduce((s,p) => s + p.premium, 0);
-  const insurancePnl = insuranceTotal - insurancePremium;
+  const insuranceDistribution = _INSURANCE.reduce((s,p) => s + (p.distribution || 0), 0);
+  const insuranceSurrenderTotal = _INSURANCE.reduce((s,p) => s + (p.surrenderValue || 0), 0);
+  const insurancePnl = insuranceTotal + insuranceDistribution - insurancePremium;
+  const insuranceInclusiveReturn = insurancePremium
+    ? _INSURANCE.reduce((s,p) => s + (p.inclusiveReturn || 0) * p.premium, 0) / insurancePremium
+    : 0;
   const cashTotal = _CASH_ACCOUNTS.reduce((s,c) => s + c.amount, 0);
   const liabilitiesTotal = _LIABILITIES.reduce((s,l) => s + l.amount, 0);
   const realEstateTotal = _REAL_ESTATE.reduce((s,r) => s + r.estimatedValue, 0);
@@ -848,7 +880,7 @@ function renderAll() {
     }
 
     cards.splice(4, 0, {
-      label: "🇺🇸 美股總資產 (含現金)",
+      label: "🇺🇸 美股總資產（現金、匯率沿用舊值，估算）",
       val: "$" + usTotalAsset.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + " USD",
       sub: "約 NT$ " + usTotalTWD.toLocaleString() + " 元 (股票 $" + usVal.toLocaleString('en-US', {minimumFractionDigits:2}) + " ＋ 現金 $" + _US_CASH.toLocaleString('en-US', {minimumFractionDigits:2}) + ")",
       color: cls(usPnl)
@@ -858,7 +890,7 @@ function renderAll() {
       cards.splice(5, 0, {
         label: "🛡️ 投資型保單現價值",
         val: "NT$ " + insuranceTotal.toLocaleString('zh-TW') + " 元",
-        sub: "投入 $" + insurancePremium.toLocaleString() + " ＋ 收益分配 $" + _INSURANCE.reduce((s,p)=>s+p.distribution,0).toLocaleString(),
+        sub: "投入 $" + insurancePremium.toLocaleString() + " ＋ 累積配息 $" + insuranceDistribution.toLocaleString() + " ｜ 解約價值 $" + insuranceSurrenderTotal.toLocaleString(),
         color: cls(insurancePnl)
       });
     }
@@ -932,12 +964,12 @@ function renderAll() {
     if (usElem) {
       usElem.innerHTML = usHead + "<tbody>" + usRows +
         `<tr style="background:var(--bg2);">
-          <td colspan="6">💵 美股現金餘額 (Firstrade)</td>
+          <td colspan="6">💵 美股現金（${typeof US_CASH_AS_OF !== 'undefined' ? US_CASH_AS_OF : '日期未提供'} 歷史紀錄）</td>
           <td>$${_US_CASH.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
           <td colspan="2" style="color:var(--muted);font-size:12px;">可用交割完成資金</td>
         </tr>
         <tr style="font-weight:700;background:var(--bg3);font-size:14px;">
-          <td colspan="6">🏛️ 美股帳戶總資產 (股票 ＋ 現金)</td>
+          <td colspan="6">🏛️ 美股帳戶總資產估算（股票 ＋ 歷史現金）</td>
           <td>$${usTotalAsset.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
           <td class="${cls(usPnl)}">${sign(usPnl)}$${Math.abs(usPnl).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
           <td class="${cls(usPnl)}">${sign(usPct)}${Math.abs(usPct).toFixed(2)}%</td>
@@ -948,21 +980,25 @@ function renderAll() {
   // Insurance table
   if (_INSURANCE.length > 0) {
     const insHead = `<thead><tr>
-      <th>保單名稱</th><th>生效日</th><th>累計保費</th><th>帳戶現值</th>
-      <th>累積收益分配</th><th>帳面損益</th><th>報酬率</th>
+      <th>保單名稱</th><th>基準日</th><th>生效日</th><th>累計保費</th>
+      <th>淨現金解約價值</th><th>帳戶現值</th><th>累積配息</th>
+      <th>現金含息損益</th><th>含收益分配報酬率（試算）</th>
     </tr></thead>`;
     const insRows = _INSURANCE.map(p => {
-      const pnl = p.value - p.premium;
+      const pnl = p.value + (p.distribution || 0) - p.premium;
       const pct = p.premium ? (pnl / p.premium * 100) : 0;
       const bar = Math.min(Math.abs(pct), 150) / 150 * 100;
       return `<tr>
         <td><strong>${p.name}</strong></td>
+        <td style="color:var(--muted);">${p.asOf || '—'}</td>
         <td style="color:var(--muted);">${p.startDate}</td>
         <td>$${p.premium.toLocaleString('zh-TW')}</td>
+        <td>${p.surrenderValue == null ? '未提供' : '$' + p.surrenderValue.toLocaleString('zh-TW')}</td>
         <td>$${p.value.toLocaleString('zh-TW')}</td>
         <td style="color:var(--green);">+$${p.distribution.toLocaleString('zh-TW')}</td>
         <td class="${cls(pnl)}">${sign(pnl)}$${Math.abs(pnl).toLocaleString('zh-TW')}</td>
-        <td class="${cls(pnl)}">${sign(pct)}${Math.abs(pct).toFixed(2)}%
+        <td class="${cls(p.inclusiveReturn || pct)}">${(p.inclusiveReturn ?? pct).toFixed(2)}%
+          <div style="color:var(--muted);font-size:10px;">現金口徑 ${sign(pct)}${Math.abs(pct).toFixed(2)}%</div>
           <div class="pbar"><div class="pbar-fill${pct<0?" neg":""}" style="width:${bar}%"></div></div>
         </td>
       </tr>`;
@@ -972,10 +1008,12 @@ function renderAll() {
       insElem.innerHTML = insHead + "<tbody>" + insRows +
         `<tr style="font-weight:600;background:var(--bg3);">
           <td colspan="3">保單合計</td>
+          <td>$${insurancePremium.toLocaleString('zh-TW')}</td>
+          <td>${_INSURANCE.some(p => p.surrenderValue == null) ? '未提供完整資料' : '$' + insuranceSurrenderTotal.toLocaleString('zh-TW')}</td>
           <td>$${insuranceTotal.toLocaleString('zh-TW')}</td>
-          <td style="color:var(--green);">+$${_INSURANCE.reduce((s,p)=>s+p.distribution,0).toLocaleString('zh-TW')}</td>
+          <td style="color:var(--green);">+$${insuranceDistribution.toLocaleString('zh-TW')}</td>
           <td class="${cls(insurancePnl)}">${sign(insurancePnl)}$${Math.abs(insurancePnl).toLocaleString('zh-TW')}</td>
-          <td class="${cls(insurancePnl)}">${sign(insurancePnl/insurancePremium*100)}${Math.abs(insurancePnl/insurancePremium*100).toFixed(2)}%</td>
+          <td class="${cls(insuranceInclusiveReturn)}">${insuranceInclusiveReturn.toFixed(2)}%</td>
         </tr></tbody>`;
     }
   }
@@ -1662,18 +1700,18 @@ const REPO_OWNER = 'kodada55123';
 const REPO_NAME  = 'trading';
 const REPO_FILE  = 'data.js';
 
-function getRepoToken() { return localStorage.getItem(REPO_TOKEN_KEY) || ''; }
+function getRepoToken() { return sessionStorage.getItem(REPO_TOKEN_KEY) || ''; }
 
 function saveRepoToken() {
   const token = document.getElementById('repo-token').value.trim();
   const res   = document.getElementById('repo-result');
   if (!token) { res.textContent = '❌ 請填入 Token'; res.style.color='var(--red)'; return; }
-  localStorage.setItem(REPO_TOKEN_KEY, token);
-  res.textContent = '✅ Token 已儲存'; res.style.color = 'var(--green)';
+  sessionStorage.setItem(REPO_TOKEN_KEY, token);
+  res.textContent = '✅ Token 僅儲存於本分頁'; res.style.color = 'var(--green)';
 }
 
 function clearRepoToken() {
-  localStorage.removeItem(REPO_TOKEN_KEY);
+  sessionStorage.removeItem(REPO_TOKEN_KEY);
   document.getElementById('repo-token').value = '';
   const res = document.getElementById('repo-result');
   res.textContent = '已清除'; res.style.color = 'var(--muted)';
@@ -1783,6 +1821,10 @@ const NOTE_PREFIXES  = ['note_', 'journal_'];
 const DATA_TS_KEY    = 'data_saved_at';
 const DATA_KEYS      = ['trades_data', 'positions_data', 'snapshots_data', 'dividends_data', DATA_TS_KEY];
 
+// Remove credentials persisted by older versions. Tokens now live only for this tab.
+localStorage.removeItem(REPO_TOKEN_KEY);
+localStorage.removeItem(GIST_TOKEN_KEY);
+
 function isNoteKey(k) { return NOTE_PREFIXES.some(p => k.startsWith(p)) || DATA_KEYS.includes(k); }
 
 // data.js 內建的資料時間戳（舊版 data.js 沒有 DATA_TS 就用 LAST_UPDATED 當日 0 點）
@@ -1838,7 +1880,7 @@ function setSyncStatus(state, text) {
 
 function getGistConfig() {
   return {
-    token:  localStorage.getItem(GIST_TOKEN_KEY) || '',
+    token:  sessionStorage.getItem(GIST_TOKEN_KEY) || '',
     gistId: localStorage.getItem(GIST_ID_KEY)    || '',
   };
 }
@@ -1919,7 +1961,7 @@ async function saveGistConfig() {
   const gistId = document.getElementById('gist-id').value.trim();
   const result = document.getElementById('sync-result');
   if (!token || !gistId) { result.textContent = '❌ 請填寫 Token 和 Gist ID'; result.style.color='var(--red)'; return; }
-  localStorage.setItem(GIST_TOKEN_KEY, token);
+  sessionStorage.setItem(GIST_TOKEN_KEY, token);
   localStorage.setItem(GIST_ID_KEY, gistId);
   result.textContent = '測試連線中…';
   result.style.color = 'var(--muted)';
@@ -1954,7 +1996,7 @@ async function manualSync() {
 
 function clearGistConfig() {
   if (!confirm('確定清除同步設定？（筆記內容不會刪除）')) return;
-  localStorage.removeItem(GIST_TOKEN_KEY);
+  sessionStorage.removeItem(GIST_TOKEN_KEY);
   localStorage.removeItem(GIST_ID_KEY);
   document.getElementById('gist-token').value = '';
   document.getElementById('gist-id').value = '';
@@ -1979,39 +2021,44 @@ window.addEventListener('DOMContentLoaded', () => {
   if (rt) document.getElementById('repo-token').value = rt;
 });
 
-// ─────────────────────────────────────────────
-// Boot — auto-setup from URL hash #setup:GISTID:TOKEN
-// ─────────────────────────────────────────────
-(function autoSetup() {
-  const hash = location.hash;
-  if (hash.startsWith('#setup:')) {
-    const rest  = hash.slice(7);
-    const colon = rest.indexOf(':');
-    if (colon >= 0) {
-      const gistId = rest.slice(0, colon);
-      const token  = rest.slice(colon + 1);
-      if (gistId && token) {
-        localStorage.setItem(GIST_ID_KEY,    gistId);
-        localStorage.setItem(GIST_TOKEN_KEY, token);
-        history.replaceState(null, '', location.pathname);
-        console.log('✅ Gist 同步設定已自動完成');
-      }
-    }
-  } else if (hash.startsWith('#reposetup:')) {
-    const token = hash.slice(11);
-    if (token) {
-      localStorage.setItem(REPO_TOKEN_KEY, token);
-      history.replaceState(null, '', location.pathname);
-      console.log('✅ Repo Token 已自動設定');
-    }
-  }
-})();
-
 loadLocalData();
 renderAll();
 loadFromGist().then(() => {
   renderAll();
 });
+
+// ─────────────────────────────────────────────
+// PWA install and offline support
+// ─────────────────────────────────────────────
+let deferredInstallPrompt = null;
+const installButton = document.getElementById('install-app');
+
+window.addEventListener('beforeinstallprompt', event => {
+  event.preventDefault();
+  deferredInstallPrompt = event;
+  installButton?.classList.add('ready');
+});
+
+installButton?.addEventListener('click', async () => {
+  if (!deferredInstallPrompt) return;
+  deferredInstallPrompt.prompt();
+  await deferredInstallPrompt.userChoice;
+  deferredInstallPrompt = null;
+  installButton.classList.remove('ready');
+});
+
+window.addEventListener('appinstalled', () => {
+  deferredInstallPrompt = null;
+  installButton?.classList.remove('ready');
+});
+
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(error => {
+      console.warn('PWA offline support unavailable', error);
+    });
+  });
+}
 </script>
 </body>
 </html>
