@@ -1,25 +1,57 @@
 // ═══════════════════════════════════════════════════════════════
-// data.js  ──  自動更新，請勿手動編輯（最後更新：2026-08-24）
+// data.js  ──  自動更新，請勿手動編輯（最後更新：2026-10-06）
 // ═══════════════════════════════════════════════════════════════
-const US_CASH = 1504.81;
+const US_CASH = 1942.32; // 歷史餘額：2026-09-28；10/06 未提供目前現金
+const US_CASH_AS_OF = "2026-09-28";
+const US_CASH_CURRENT = false;
 const USD_TWD = 31.824;
-const LAST_UPDATED = "2026-08-24";
-const DATA_TS = "2026-08-24T18:57:56+08:00"; // 台股為最新券商清單；其他資產保留各自來源日期
+const LAST_UPDATED = "2026-10-06";
+const DATA_TS = "2026-10-06T12:00:00+08:00"; // 台股為最新券商清單；其他資產保留各自來源日期
 
 // ── 投資型保單 ────────────────────────────────────────────────
 const INSURANCE_POSITIONS = [
   {
-    name:"安達人壽富貴大贏家變額年金保險（30萬）",
-    startDate:"2025-01-20", asOf:"2026-06-30", premium:300000,
-    surrenderValue:275044, value:298961, distribution:36166, fees:11809,
-    statementReturn:3.59, inclusiveReturn:15.64, currency:"TWD"
+    "name": "安達人壽富貴大贏家變額年金保險（30萬）",
+    "startDate": "2025-01-20",
+    "asOf": "2026-10-06（提供日）",
+    "premium": 300000,
+    "surrenderValue": null,
+    "value": 282398,
+    "distribution": 42966,
+    "fees": null,
+    "statementReturn": null,
+    "inclusiveReturn": 8.4547,
+    "currency": "TWD",
+    "source": "使用者保單帳戶截圖；估值日期未顯示",
+    "withdrawals": 0,
+    "loanPrincipal": 0,
+    "loanInterest": 0,
+    "loanRate": 4.3,
+    "underwritingDate": "2025-02-18",
+    "firstInvestmentDate": "2025-03-10",
+    "receiptDate": "2025-02-26"
   },
   {
-    name:"安達人壽富貴大贏家變額年金保險（100萬）",
-    startDate:"2024-12-28", asOf:"2026-06-30", premium:1000000,
-    surrenderValue:1072940, value:1166239, distribution:125370, fees:37603,
-    statementReturn:20.38, inclusiveReturn:32.92, currency:"TWD"
-  },
+    "name": "安達人壽富貴大贏家變額年金保險（100萬）",
+    "startDate": "2024-12-28",
+    "asOf": "2026-10-06（提供日）",
+    "premium": 1000000,
+    "surrenderValue": null,
+    "value": 1117386,
+    "distribution": 149605,
+    "fees": null,
+    "statementReturn": null,
+    "inclusiveReturn": 26.6991,
+    "currency": "TWD",
+    "source": "使用者保單帳戶截圖；估值日期未顯示",
+    "withdrawals": 0,
+    "loanPrincipal": 0,
+    "loanInterest": 0,
+    "loanRate": 4.3,
+    "underwritingDate": "2025-01-10",
+    "firstInvestmentDate": "2025-02-03",
+    "receiptDate": "2025-01-14"
+  }
 ];
 
 // ── 現金存款與流動資金 ──────────────────────────────────────────
@@ -52,31 +84,340 @@ const REAL_ESTATE = [
 
 
 // ── 未實現持倉 ────────────────────────────────────────────────
-// 美股部位：2026-08-20 Firstrade 快照；行情更新於 2026-08-24 18:57。
+// 美股來源：2026-10-06 提供的 Firstrade 截圖，保留券商顯示數值。
 const US_POSITIONS = [
-  { stock:"Advanced Micro Devices", code:"AMD", type:"股票", shares:8, avgCost:484.13, price:473.25, value:3786.00, pnl:-87.04, pct:-2.25, currency:"USD" },
-  { stock:"Broadcom", code:"AVGO", type:"股票", shares:8, avgCost:399.622, price:368.45, value:2947.60, pnl:-249.37, pct:-7.80, currency:"USD" },
-  { stock:"Alphabet", code:"GOOG", type:"股票", shares:12, avgCost:338.923, price:341.75, value:4101.00, pnl:33.92, pct:0.83, currency:"USD" },
-  { stock:"Marvell Technology", code:"MRVL", type:"股票", shares:4, avgCost:232.1, price:237.04, value:948.16, pnl:19.76, pct:2.13, currency:"USD" },
-  { stock:"Microsoft", code:"MSFT", type:"股票", shares:5, avgCost:407.411, price:483.24, value:2416.20, pnl:379.15, pct:18.61, currency:"USD" },
-  { stock:"Micron", code:"MU", type:"股票", shares:5, avgCost:921.978, price:966.78, value:4833.90, pnl:224.01, pct:4.86, currency:"USD" },
-  { stock:"Invesco QQQ ETF", code:"QQQ", type:"ETF", shares:4, avgCost:604.536, price:713.44, value:2853.76, pnl:435.62, pct:18.01, currency:"USD" },
-  { stock:"TSMC", code:"TSM", type:"股票", shares:15, avgCost:400.519, price:418.95, value:6284.25, pnl:276.47, pct:4.60, currency:"USD" },
+  {
+    "stock": "Broadcom",
+    "code": "AVGO",
+    "type": "股票",
+    "shares": 11,
+    "avgCost": 388.96545,
+    "cost": 4278.62,
+    "price": 365.26,
+    "value": 4017.86,
+    "pnl": -260.76,
+    "pct": -6.09,
+    "currency": "USD",
+    "asOf": "2026-10-06",
+    "source": "Firstrade 截圖；提供日，拍攝時間未顯示",
+    "sharesSource": "Inferred from rounded market value/price, cross-checked with cost/unit_cost; quantity hidden"
+  },
+  {
+    "stock": "Bloom Energy",
+    "code": "BE",
+    "type": "股票",
+    "shares": 16,
+    "avgCost": 241.51063,
+    "cost": 3864.17,
+    "price": 294.39,
+    "value": 4710.24,
+    "pnl": 846.07,
+    "pct": 21.9,
+    "currency": "USD",
+    "asOf": "2026-10-06",
+    "source": "Firstrade 截圖；提供日，拍攝時間未顯示",
+    "sharesSource": "Inferred from rounded market value/price, cross-checked with cost/unit_cost; quantity hidden"
+  },
+  {
+    "stock": "Cadence Design Systems",
+    "code": "CDNS",
+    "type": "股票",
+    "shares": 7,
+    "avgCost": 309.68429,
+    "cost": 2167.79,
+    "price": 356.18,
+    "value": 2493.26,
+    "pnl": 325.47,
+    "pct": 15.01,
+    "currency": "USD",
+    "asOf": "2026-10-06",
+    "source": "Firstrade 截圖；提供日，拍攝時間未顯示",
+    "sharesSource": "Inferred from rounded market value/price, cross-checked with cost/unit_cost; quantity hidden"
+  },
+  {
+    "stock": "CrowdStrike",
+    "code": "CRWD",
+    "type": "股票",
+    "shares": 9,
+    "avgCost": 212.49667,
+    "cost": 1912.47,
+    "price": 279.4,
+    "value": 2514.6,
+    "pnl": 602.13,
+    "pct": 31.48,
+    "currency": "USD",
+    "asOf": "2026-10-06",
+    "source": "Firstrade 截圖；提供日，拍攝時間未顯示",
+    "sharesSource": "Inferred from rounded market value/price, cross-checked with cost/unit_cost; quantity hidden"
+  },
+  {
+    "stock": "Microsoft",
+    "code": "MSFT",
+    "type": "股票",
+    "shares": 4,
+    "avgCost": 403.9325,
+    "cost": 1615.73,
+    "price": 530.5,
+    "value": 2122,
+    "pnl": 506.27,
+    "pct": 31.33,
+    "currency": "USD",
+    "asOf": "2026-10-06",
+    "source": "Firstrade 截圖；提供日，拍攝時間未顯示",
+    "sharesSource": "Inferred from rounded market value/price, cross-checked with cost/unit_cost; quantity hidden"
+  },
+  {
+    "stock": "Micron",
+    "code": "MU",
+    "type": "股票",
+    "shares": 3,
+    "avgCost": 944.78333,
+    "cost": 2834.35,
+    "price": 1068.17,
+    "value": 3204.52,
+    "pnl": 370.17,
+    "pct": 13.06,
+    "currency": "USD",
+    "asOf": "2026-10-06",
+    "source": "Firstrade 截圖；提供日，拍攝時間未顯示",
+    "sharesSource": "Inferred from rounded market value/price, cross-checked with cost/unit_cost; quantity hidden"
+  },
+  {
+    "stock": "ServiceNow",
+    "code": "NOW",
+    "type": "股票",
+    "shares": 19,
+    "avgCost": 138.87789,
+    "cost": 2638.68,
+    "price": 138.23,
+    "value": 2626.37,
+    "pnl": -12.31,
+    "pct": -0.47,
+    "currency": "USD",
+    "asOf": "2026-10-06",
+    "source": "Firstrade 截圖；提供日，拍攝時間未顯示",
+    "sharesSource": "Inferred from rounded market value/price, cross-checked with cost/unit_cost; quantity hidden"
+  },
+  {
+    "stock": "NVIDIA",
+    "code": "NVDA",
+    "type": "股票",
+    "shares": 10,
+    "avgCost": 215.848,
+    "cost": 2158.48,
+    "price": 241.73,
+    "value": 2417.29,
+    "pnl": 258.81,
+    "pct": 11.99,
+    "currency": "USD",
+    "asOf": "2026-10-06",
+    "source": "Firstrade 截圖；提供日，拍攝時間未顯示",
+    "sharesSource": "Inferred from rounded market value/price, cross-checked with cost/unit_cost; quantity hidden"
+  },
+  {
+    "stock": "Invesco QQQ ETF",
+    "code": "QQQ",
+    "type": "ETF",
+    "shares": 4,
+    "avgCost": 602.3775,
+    "cost": 2409.51,
+    "price": 760.51,
+    "value": 3042.02,
+    "pnl": 632.51,
+    "pct": 26.25,
+    "currency": "USD",
+    "asOf": "2026-10-06",
+    "source": "Firstrade 截圖；提供日，拍攝時間未顯示",
+    "sharesSource": "Inferred from rounded market value/price, cross-checked with cost/unit_cost; quantity hidden"
+  },
+  {
+    "stock": "TSMC",
+    "code": "TSM",
+    "type": "股票",
+    "shares": 10,
+    "avgCost": 404.241,
+    "cost": 4042.41,
+    "price": 485.05,
+    "value": 4850.5,
+    "pnl": 808.09,
+    "pct": 19.99,
+    "currency": "USD",
+    "asOf": "2026-10-06",
+    "source": "Firstrade 截圖；提供日，拍攝時間未顯示",
+    "sharesSource": "Inferred from rounded market value/price, cross-checked with cost/unit_cost; quantity hidden"
+  }
 ];
 
-// 台股部位：2026-08-24 券商清單；行情更新於 2026-08-24 18:57。
+// 台股來源：portfolio-snapshot-20261006.csv，保留券商費稅口徑。
 const POSITIONS = [
-  { stock:"元大台灣50", code:"0050", type:"ETF", shares:8500, avgCost:63.65, price:103.80, value:882300.00, pnl:341275.00, pct:63.08 },
-  { stock:"富邦台50", code:"006208", type:"ETF", shares:11000, avgCost:99.23, price:238.20, value:2620200.00, pnl:1528670.00, pct:140.05 },
-  { stock:"復華富時不動產", code:"00712", type:"ETF", shares:12000, avgCost:9.61, price:8.84, value:106080.00, pnl:-9240.00, pct:-8.01 },
-  { stock:"國泰永續高股息", code:"00878", type:"ETF", shares:31000, avgCost:22.01, price:32.43, value:1005330.00, pnl:323020.00, pct:47.34 },
-  { stock:"群益台灣精選高息", code:"00919", type:"ETF", shares:6000, avgCost:22.57, price:30.65, value:183900.00, pnl:48480.00, pct:35.80 },
-  { stock:"光寶科", code:"2301", type:"股票", shares:400, avgCost:251.25, price:287.00, value:114800.00, pnl:14300.00, pct:14.23 },
-  { stock:"順德", code:"2351", type:"股票", shares:300, avgCost:185.05, price:200.50, value:60150.00, pnl:4635.00, pct:8.35 },
-  { stock:"聯發科", code:"2454", type:"股票", shares:60, avgCost:3951.25, price:3765.00, value:225900.00, pnl:-11175.00, pct:-4.71 },
-  { stock:"希華", code:"2484", type:"股票", shares:1000, avgCost:75.9, price:72.10, value:72100.00, pnl:-3800.00, pct:-5.01 },
-  { stock:"精誠", code:"6214", type:"股票", shares:1000, avgCost:152.05, price:179.50, value:179500.00, pnl:27450.00, pct:18.05 },
-  { stock:"群聯", code:"8299", type:"股票", shares:74, avgCost:2115.27, price:2135.00, value:157990.00, pnl:1460.02, pct:0.93 },
+  {
+    "stock": "元大台灣50",
+    "code": "0050",
+    "type": "ETF",
+    "shares": 8500,
+    "avgCost": 63.65,
+    "price": 116.5,
+    "value": 988882,
+    "cost": 541257,
+    "pnl": 447625,
+    "pct": 82.7,
+    "asOf": "2026-10-06",
+    "source": "券商快照"
+  },
+  {
+    "stock": "富邦台50",
+    "code": "006208",
+    "type": "ETF",
+    "shares": 11000,
+    "avgCost": 99.23,
+    "price": 265.9,
+    "value": 2920866,
+    "cost": 1091900,
+    "pnl": 1828966,
+    "pct": 167.5,
+    "asOf": "2026-10-06",
+    "source": "券商快照"
+  },
+  {
+    "stock": "復華富時不動產",
+    "code": "00712",
+    "type": "ETF",
+    "shares": 12000,
+    "avgCost": 9.61,
+    "price": 7,
+    "value": 83889,
+    "cost": 115405,
+    "pnl": -31516,
+    "pct": -27.31,
+    "asOf": "2026-10-06",
+    "source": "券商快照"
+  },
+  {
+    "stock": "國泰永續高股息",
+    "code": "00878",
+    "type": "ETF",
+    "shares": 31000,
+    "avgCost": 22.01,
+    "price": 35.17,
+    "value": 1088758,
+    "cost": 682482,
+    "pnl": 406276,
+    "pct": 59.53,
+    "asOf": "2026-10-06",
+    "source": "券商快照"
+  },
+  {
+    "stock": "群益台灣精選高息",
+    "code": "00919",
+    "type": "ETF",
+    "shares": 6000,
+    "avgCost": 22.57,
+    "price": 31.8,
+    "value": 190538,
+    "cost": 135442,
+    "pnl": 55096,
+    "pct": 40.68,
+    "asOf": "2026-10-06",
+    "source": "券商快照"
+  },
+  {
+    "stock": "光寶科",
+    "code": "2301",
+    "type": "股票",
+    "shares": 400,
+    "avgCost": 298,
+    "price": 299,
+    "value": 119196,
+    "cost": 119246,
+    "pnl": -50,
+    "pct": -0.04,
+    "asOf": "2026-10-06",
+    "source": "券商快照"
+  },
+  {
+    "stock": "智邦",
+    "code": "2345",
+    "type": "股票",
+    "shares": 55,
+    "avgCost": 1956.82,
+    "price": 2050,
+    "value": 112370,
+    "cost": 107666,
+    "pnl": 4704,
+    "pct": 4.37,
+    "asOf": "2026-10-06",
+    "source": "券商快照"
+  },
+  {
+    "stock": "金像電",
+    "code": "2368",
+    "type": "股票",
+    "shares": 150,
+    "avgCost": 1093.67,
+    "price": 1260,
+    "value": 188366,
+    "cost": 164111,
+    "pnl": 24255,
+    "pct": 14.78,
+    "asOf": "2026-10-06",
+    "source": "券商快照"
+  },
+  {
+    "stock": "聯發科",
+    "code": "2454",
+    "type": "股票",
+    "shares": 54,
+    "avgCost": 3958.61,
+    "price": 4920,
+    "value": 264786,
+    "cost": 213846,
+    "pnl": 50940,
+    "pct": 23.82,
+    "asOf": "2026-10-06",
+    "source": "券商快照"
+  },
+  {
+    "stock": "強茂",
+    "code": "2481",
+    "type": "股票",
+    "shares": 900,
+    "avgCost": 159.39,
+    "price": 176,
+    "value": 157865,
+    "cost": 143506,
+    "pnl": 14359,
+    "pct": 10.01,
+    "asOf": "2026-10-06",
+    "source": "券商快照"
+  },
+  {
+    "stock": "嘉澤",
+    "code": "3533",
+    "type": "股票",
+    "shares": 60,
+    "avgCost": 1747.5,
+    "price": 1865,
+    "value": 111522,
+    "cost": 104890,
+    "pnl": 6632,
+    "pct": 6.32,
+    "asOf": "2026-10-06",
+    "source": "券商快照"
+  },
+  {
+    "stock": "榮科",
+    "code": "4989",
+    "type": "股票",
+    "shares": 1000,
+    "avgCost": 69.5,
+    "price": 68.1,
+    "value": 67869,
+    "cost": 69527,
+    "pnl": -1658,
+    "pct": -2.38,
+    "asOf": "2026-10-06",
+    "source": "券商快照"
+  }
 ];
 
 // ── 已實現損益 ────────────────────────────────────────────────
